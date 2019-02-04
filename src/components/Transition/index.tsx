@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './index.css';
 
 export interface ITransitionProps {
+    guid: string;
     title: string;
     x: number;
     y: number;

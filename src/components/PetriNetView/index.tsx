@@ -19,17 +19,54 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     
     constructor(props: IPetriNetViewProps) {
         super(props);
-        this.state = DemoNet;
+        var demoNet = DemoNet;
+        let places = demoNet.places.map((place: any) => {
+            place.updatePosition = this.updatePosition;
+            return place;
+        });
+        let transitions = demoNet.transitions.map((transition: any) => {
+            return transition;
+        })
+        this.state = {
+            places: places,
+            transitions: transitions
+        }
+    }
+
+    updatePosition = (guid: string, x: number, y: number) => {
+        const places = this.state.places;
+        places.map((place: IPlaceProps) => {
+            if (place.guid === guid) {
+                place.x = x;
+                place.y = y;
+            }
+            return place;
+        });
+        const transitions = this.state.transitions;
+        transitions.map((transition: ITransitionProps) => {
+            if (transition.guid === guid) {
+                transition.x = x;
+                transition.y = y;
+            }
+            return transition;
+        })
+        console.log("Pos updated");
+        this.setState({
+            places: places,
+            transitions: transitions
+        });
     }
 
     getPlaceElements = () => {
         return this.state.places.map((placeProps) => {
             return (
             <Place 
+                guid={placeProps.guid}
                 title={placeProps.title} 
                 x={placeProps.x} 
                 y={placeProps.y}
-                key={placeProps.title + '@' + placeProps.x + ',' + placeProps.y}/>
+                updatePosition={this.updatePosition}
+                key={placeProps.guid}/>
             );
         });
     }
@@ -38,10 +75,11 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         return this.state.transitions.map((transProps) => {
             return (
                 <Transition
+                    guid={transProps.guid}
                     title={transProps.title}
                     x={transProps.x}
                     y={transProps.y}
-                    key={transProps.title + '@' + transProps.x + ',' + transProps.y} />
+                    key={transProps.guid} />
             );
         })
     }
