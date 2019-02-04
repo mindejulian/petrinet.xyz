@@ -50,7 +50,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             }
             return transition;
         })
-        console.log("Pos updated");
+
         this.setState({
             places: places,
             transitions: transitions
@@ -79,6 +79,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     title={transProps.title}
                     x={transProps.x}
                     y={transProps.y}
+                    updatePosition={this.updatePosition}
                     key={transProps.guid} />
             );
         })
