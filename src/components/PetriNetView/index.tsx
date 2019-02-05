@@ -13,7 +13,8 @@ interface IPetriNetViewProps {
 
 enum ToolMode {
     Move,
-    Transition    
+    Transition,
+    Place    
 }
 
 interface IPetriNetViewState {
@@ -109,6 +110,12 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         })
     }
 
+    setModePlace = (e: any) => {
+        this.setState({
+            toolMode: ToolMode.Place
+        })
+    }
+
     exportModelAsJSON = (e: any) => {
         let filename = "export.json";
         let contentType = "application/json;charset=utf-8;";
@@ -147,6 +154,26 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 this.setState({
                     transitions: transitions
                 });
+                break
+            }
+            case ToolMode.Place: {
+                const guid = uuid.v4()
+                let place: IPlaceProps = {
+                    guid: guid,
+                    title: "New place",
+                    x: e.pageX,
+                    y: e.pageY,
+                    updatePosition: this.updatePosition,
+                    selected: false,
+                    setSelected: this.setSelected
+                }
+                var places = this.state.places
+                places.push(place)
+                this.setSelected(guid)
+                this.setState({
+                    places: places
+                })
+                break
             }
             default: {
                 return
@@ -255,6 +282,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             <Toolbar
                 setModeMove={this.setModeMove}
                 setModeTransition={this.setModeTransition} 
+                setModePlace={this.setModePlace}
                 exportModelAsJSON={this.exportModelAsJSON} />
             <svg 
                 width="1000" 
