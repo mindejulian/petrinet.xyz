@@ -6,20 +6,29 @@ export interface ILineProps {
     y1: number;
     x2: number;
     y2: number;
+    toTransition: boolean;
 }
 
 class Line extends Component<ILineProps, {}> {
+
+    markerUrl = () => {
+        if (this.props.toTransition) {
+            return 'url(#transitionHead)'
+        } 
+        return 'url(#placeHead)'
+    }
+
     render() {
         return (
             <g>
-                <line 
-                    x1={this.props.x1} 
-                    y1={this.props.y1} 
-                    x2={this.props.x2} 
-                    y2={this.props.y2} 
-                    stroke="black">
-                </line>
-            </g>
+                <path 
+                    markerEnd={this.markerUrl()}
+                    strokeWidth="3"
+                    fill="none"
+                    stroke="black"
+                    d={'M' + this.props.x1 + ',' + this.props.y1 + ' ' + this.props.x2 + ',' + this.props.y2 }>
+                    </path>
+            </g>    
         );
     }
 }

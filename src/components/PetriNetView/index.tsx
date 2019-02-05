@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './index.css';
+import { Toolbar, IToolbarProps } from '../Toolbar';
 import { Place, IPlaceProps } from '../Place';
 import { Transition, ITransitionProps } from '../Transition';
 import Line from '../Line';
@@ -9,9 +10,15 @@ interface IPetriNetViewProps {
 
 }
 
+enum ToolMode {
+    Move,
+    Transition    
+}
+
 interface IPetriNetViewState {
     places: IPlaceProps[];
     transitions: ITransitionProps[];
+    toolMode: ToolMode;
 }
 
 
@@ -29,11 +36,13 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         })
         this.state = {
             places: places,
-            transitions: transitions
+            transitions: transitions,
+            toolMode: ToolMode.Move
         }
     }
 
     updatePosition = (guid: string, x: number, y: number) => {
+        if (this.state.toolMode !== ToolMode.Move ) { return }
         const places = this.state.places;
         places.map((place: IPlaceProps) => {
             if (place.guid === guid) {
@@ -55,6 +64,56 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             places: places,
             transitions: transitions
         });
+    }
+
+    // Toolbar callbacks
+
+    setModeMove = (e: any) => {
+        this.setState({
+            toolMode: ToolMode.Move
+        })
+    }
+
+    setModeTransition = (e: any) => {
+        this.setState({
+            toolMode: ToolMode.Transition
+        })
+    }
+
+    exportModelAsJSON = (e: any) => {
+        let filename = "export.json";
+        let contentType = "application/json;charset=utf-8;";
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            var blob = new Blob([decodeURIComponent(encodeURI(JSON.stringify(this.state)))], { type: contentType });
+            navigator.msSaveOrOpenBlob(blob, filename);
+        } else {
+            var a = document.createElement('a');
+            a.download = filename;
+            a.href = 'data:' + contentType + ',' + encodeURIComponent(JSON.stringify(this.state));
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+
+    handleMouseDown = (e: any) => {
+        switch (this.state.toolMode) {
+            case ToolMode.Transition: {
+                let transition: ITransitionProps = {
+                    guid: "dsfsd",
+                    title: "New node",
+                    x: e.pageX,
+                    y: e.pageY,
+                    updatePosition: this.updatePosition,
+                    from: [],
+                    to: []
+                }
+            }
+            default: {
+                return
+            }
+        }
     }
 
     getPlaceElements = () => {
@@ -80,15 +139,88 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     x={transProps.x}
                     y={transProps.y}
                     updatePosition={this.updatePosition}
+                    from={transProps.from}
+                    to={transProps.to}
                     key={transProps.guid} />
             );
         })
     }
 
+    getLineElements = () => {
+        return this.state.transitions.flatMap((transProps) => {
+            const fromLines = transProps.from.map((placeId) => this.createLines(transProps, placeId, true));
+            const toLines = transProps.to.map((placeId) => this.createLines(transProps, placeId, false));
+            return fromLines.concat(toLines);
+        })
+    }
+
+    getSVGDefs = () => {
+        return (
+        <defs>
+            <marker 
+                id='placeHead' 
+                orient='auto' 
+                markerWidth='20' 
+                markerHeight='40'
+                refX='20.5' 
+                refY='4'>
+            <path d='M0,0 V8 L4,4 Z' fill='#555' />
+            </marker>
+            <marker 
+                id='transitionHead' 
+                orient='auto' 
+                markerWidth='20' 
+                markerHeight='40'
+                refX='12' 
+                refY='4'>
+            <path d='M0,0 V8 L4,4 Z' fill='#555' />
+            </marker>
+            <filter x="0" y="0" width="1" height="1" id="textBkg">
+                <feFlood floodColor="rgba(255,255,255, 0.58)"/>
+                <feComposite in="SourceGraphic" />
+            </filter>
+        </defs>)
+    }
+ 
+    createLines = (transProps: ITransitionProps, placeId: string, toTransition: boolean) => {
+        const place = this.state.places.find((p) => p.guid === placeId)
+        if (place !== undefined) {
+            if (toTransition) {
+                return (
+                    <Line 
+                        x1={place.x} 
+                        y1={place.y} 
+                        x2={transProps.x + 6} 
+                        y2={transProps.y + 25}
+                        toTransition={toTransition} />
+                )
+            }
+            return (
+                <Line 
+                    x1={transProps.x + 6} 
+                    y1={transProps.y + 25} 
+                    x2={place.x} 
+                    y2={place.y}
+                    toTransition={toTransition} />
+            )
+        } 
+    }
+
+
     render() {
         return (
         <div className="petri-net-view">
-            <svg width="1000" height="1000" viewBox="0 0 1000 1000">
+            <Toolbar
+                setModeMove={this.setModeMove}
+                setModeTransition={this.setModeTransition} 
+                exportModelAsJSON={this.exportModelAsJSON} />
+            <svg 
+                width="1000" 
+                height="1000" 
+                viewBox="0 0 1000 1000" 
+                onMouseDown={this.handleMouseDown} >
+                { this.getSVGDefs() }
+                { this.getLineElements() }
                 { this.getPlaceElements() }
                 { this.getTransitionElements() }
             </svg>

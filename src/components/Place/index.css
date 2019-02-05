@@ -1,28 +1,10 @@
 
-.place-container {
-    border: 2px solid black;
-    display: block;
-    position: absolute;
-    padding: 0;
-    text-align: center;
-    border-radius: 50%;
-    width: 140px;
-    height: 140px;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    overflow: auto;
-}
-
-svg {
-    height: 100%;
-}
-
-circle {
+.place-circle {
     fill: #0099ff;
+    cursor: move;
 }
 
-text { 
+.place-text { 
     fill: #000;
     font-size: 1.3rem;
     font-family: sans-serif;

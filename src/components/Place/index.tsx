@@ -61,7 +61,7 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                     r="50" 
                     cx={this.props.x} 
                     cy={this.props.y} 
-                    className="circle-back" 
+                    className="place-circle" 
                     onMouseDown={this.handleDragStart} />
 
                 <text 
@@ -69,9 +69,9 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                     y={this.props.y} 
                     textAnchor="middle" 
                     dy="0.3em" 
+                    className="place-text"
                     onMouseDown={this.handleDragStart} >
-                    {this.props.title}
-                    
+                        {this.props.title} 
                 </text>
             </g>
         )

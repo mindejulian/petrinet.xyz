@@ -1,4 +1,8 @@
-text {
-    color: black;
+.transition-rect {
+    cursor: move;
+}
+
+.transition-text {
+    cursor: move;
 }
 

@@ -7,6 +7,8 @@ export interface ITransitionProps {
     x: number;
     y: number;
     updatePosition: (guid: string, x: number, y: number) => void;
+    from: string[];
+    to: string[];
 }
 
 interface ITransitionState {
@@ -62,6 +64,7 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
                     y={this.props.y} 
                     width="12" 
                     height="50" 
+                    className="transition-rect"
                     onMouseDown={this.handleDragStart} >
                 </rect>
 
@@ -69,7 +72,9 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
                     x={this.props.x} 
                     y={this.props.y + 75} 
                     textAnchor="middle"
-                    onMouseDown={this.handleDragStart} >
+                    onMouseDown={this.handleDragStart}
+                    className="transition-text"
+                    filter="url(#textBkg)" >
                     {this.props.title}
                 </text>
             </g>
