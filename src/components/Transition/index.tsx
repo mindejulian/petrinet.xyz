@@ -9,6 +9,8 @@ export interface ITransitionProps {
     updatePosition: (guid: string, x: number, y: number) => void;
     from: string[];
     to: string[];
+    selected: boolean;
+    setSelected: (guid: string) => void;
 }
 
 interface ITransitionState {
@@ -31,6 +33,7 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
     }
 
     handleDragStart = (e: any) => {
+        this.props.setSelected(this.props.guid);
         this.setState({
             xMouse: e.pageX,
             yMouse: e.pageY,
@@ -64,6 +67,7 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
                     y={this.props.y} 
                     width="12" 
                     height="50" 
+                    fill={this.props.selected ? 'red' : 'black'}
                     className="transition-rect"
                     onMouseDown={this.handleDragStart} >
                 </rect>

@@ -30,9 +30,14 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         var demoNet = DemoNet;
         let places = demoNet.places.map((place: any) => {
             place.updatePosition = this.updatePosition;
+            place.selected = false;
+            place.setSelected = this.setSelected;
             return place;
         });
         let transitions = demoNet.transitions.map((transition: any) => {
+            transition.updatePosition = this.updatePosition;
+            transition.selected = false;
+            transition.setSelected = this.setSelected;
             return transition;
         })
         this.state = {
@@ -61,6 +66,29 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             return transition;
         })
 
+        this.setState({
+            places: places,
+            transitions: transitions
+        });
+    }
+
+    setSelected = (guid: string) => {
+        const places = this.state.places;
+        places.map((place: IPlaceProps) => {
+            if(place.guid === guid) {
+                place.selected = true;
+            } else {
+                place.selected = false;
+            }
+        });
+        const transitions = this.state.transitions;
+        transitions.map((transition: ITransitionProps) => {
+            if (transition.guid === guid) {
+                transition.selected = true;
+            } else {
+                transition.selected = false;
+            }
+        });
         this.setState({
             places: places,
             transitions: transitions
@@ -101,18 +129,21 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     handleMouseDown = (e: any) => {
         switch (this.state.toolMode) {
             case ToolMode.Transition: {
+                const guid = uuid.v4(); 
                 let transition: ITransitionProps = {
-                    guid: uuid.v4(),
+                    guid: guid,
                     title: "New transition",
-                    x: e.pageX,
-                    y: e.pageY,
+                    x: e.pageX - 6,
+                    y: e.pageY - 80,
                     updatePosition: this.updatePosition,
+                    selected: false,
+                    setSelected: this.setSelected,
                     from: [],
                     to: []
                 }
-
                 var transitions = this.state.transitions
                 transitions.push(transition);
+                this.setSelected(guid);
                 this.setState({
                     transitions: transitions
                 });
@@ -131,7 +162,9 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 title={placeProps.title} 
                 x={placeProps.x} 
                 y={placeProps.y}
-                updatePosition={this.updatePosition}
+                updatePosition={placeProps.updatePosition}
+                selected={placeProps.selected}
+                setSelected={placeProps.setSelected}
                 key={placeProps.guid}/>
             );
         });
@@ -145,9 +178,11 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     title={transProps.title}
                     x={transProps.x}
                     y={transProps.y}
-                    updatePosition={this.updatePosition}
+                    updatePosition={transProps.updatePosition}
                     from={transProps.from}
                     to={transProps.to}
+                    selected={transProps.selected}
+                    setSelected={transProps.setSelected}
                     key={transProps.guid} />
             );
         })

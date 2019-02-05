@@ -4,6 +4,10 @@
     cursor: move;
 }
 
+.place-circle.selected {
+    fill: #ff4444;
+}
+
 .place-text { 
     fill: #000;
     font-size: 1.3rem;

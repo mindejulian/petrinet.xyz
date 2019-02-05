@@ -7,6 +7,8 @@ export interface IPlaceProps {
     x: number;
     y: number;
     updatePosition: (guid: string, x: number, y: number) => void;
+    selected: boolean;
+    setSelected: (guid: string) => void;
 }
 
 interface IPlaceState {
@@ -29,6 +31,7 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
     }
 
     handleDragStart = (e: any) => {
+        this.props.setSelected(this.props.guid)
         this.setState({
             xMouse: e.pageX,
             yMouse: e.pageY,
@@ -61,7 +64,7 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                     r="50" 
                     cx={this.props.x} 
                     cy={this.props.y} 
-                    className="place-circle" 
+                    className={ this.props.selected ? "place-circle selected" : "place-circle" } 
                     onMouseDown={this.handleDragStart} />
 
                 <text 
