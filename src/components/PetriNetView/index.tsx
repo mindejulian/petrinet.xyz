@@ -14,7 +14,8 @@ interface IPetriNetViewProps {
 enum ToolMode {
     Move,
     Transition,
-    Place    
+    Place,
+    AddConnection
 }
 
 interface IPetriNetViewState {
@@ -33,18 +34,20 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             place.updatePosition = this.updatePosition;
             place.selected = false;
             place.setSelected = this.setSelected;
+            place.setTitle = this.setTitle;
             return place;
         });
         let transitions = demoNet.transitions.map((transition: any) => {
             transition.updatePosition = this.updatePosition;
             transition.selected = false;
             transition.setSelected = this.setSelected;
+            transition.setTitle = this.setTitle;
             return transition;
         })
         this.state = {
             places: places,
             transitions: transitions,
-            toolMode: ToolMode.Move
+            toolMode: ToolMode.Move,
         }
     }
 
@@ -94,6 +97,29 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             places: places,
             transitions: transitions
         });
+
+        if (this.state.toolMode === ToolMode.AddConnection) {
+
+        }
+    }
+
+    setTitle = (guid: string, title: string) => {
+        const places = this.state.places;
+        places.map((place: IPlaceProps) => {
+            if(place.guid === guid) {
+                place.title = title;
+            }
+        });
+        const transitions = this.state.transitions;
+        transitions.map((transition: ITransitionProps) => {
+            if (transition.guid === guid) {
+                transition.title = title;
+            } 
+        });
+        this.setState({
+            places: places,
+            transitions: transitions
+        });
     }
 
     // Toolbar callbacks
@@ -113,6 +139,12 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     setModePlace = (e: any) => {
         this.setState({
             toolMode: ToolMode.Place
+        })
+    }
+
+    setModeConnection = (e: any) => {
+        this.setState({
+            toolMode: ToolMode.AddConnection
         })
     }
 
@@ -146,7 +178,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     selected: false,
                     setSelected: this.setSelected,
                     from: [],
-                    to: []
+                    to: [],
+                    setTitle: this.setTitle
                 }
                 var transitions = this.state.transitions
                 transitions.push(transition);
@@ -165,7 +198,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     y: e.pageY,
                     updatePosition: this.updatePosition,
                     selected: false,
-                    setSelected: this.setSelected
+                    setSelected: this.setSelected,
+                    setTitle: this.setTitle
                 }
                 var places = this.state.places
                 places.push(place)
@@ -181,6 +215,11 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         }
     }
 
+    handleBkgClick = () => {
+        this.setSelected("none")
+    }
+
+
     getPlaceElements = () => {
         return this.state.places.map((placeProps) => {
             return (
@@ -192,6 +231,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 updatePosition={placeProps.updatePosition}
                 selected={placeProps.selected}
                 setSelected={placeProps.setSelected}
+                setTitle={placeProps.setTitle}
                 key={placeProps.guid}/>
             );
         });
@@ -210,6 +250,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     to={transProps.to}
                     selected={transProps.selected}
                     setSelected={transProps.setSelected}
+                    setTitle={transProps.setTitle}
                     key={transProps.guid} />
             );
         })
@@ -278,11 +319,14 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
 
     render() {
         return (
-        <div className="petri-net-view">
+        <div 
+            className="petri-net-view" 
+            onMouseDown={this.handleBkgClick}>
             <Toolbar
                 setModeMove={this.setModeMove}
                 setModeTransition={this.setModeTransition} 
                 setModePlace={this.setModePlace}
+                setModeAddConnection={this.setModeConnection}
                 exportModelAsJSON={this.exportModelAsJSON} />
             <svg 
                 width="1000" 

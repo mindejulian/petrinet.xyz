@@ -9,6 +9,7 @@ export interface IPlaceProps {
     updatePosition: (guid: string, x: number, y: number) => void;
     selected: boolean;
     setSelected: (guid: string) => void;
+    setTitle: (guid: string, title: string) => void;
 }
 
 interface IPlaceState {
@@ -31,6 +32,7 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
     }
 
     handleDragStart = (e: any) => {
+        e.stopPropagation()
         this.props.setSelected(this.props.guid)
         this.setState({
             xMouse: e.pageX,
@@ -57,6 +59,13 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
         document.removeEventListener('mouseup', this.handleDragEnd);
     }
 
+    handleDoubleClick = () => {
+        var newTitle = prompt('New title?', this.props.title)
+        if (newTitle !== null) {
+            this.props.setTitle(this.props.guid, newTitle as string)
+        }
+    }
+
     render() {
         return (
             <g>
@@ -65,7 +74,8 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                     cx={this.props.x} 
                     cy={this.props.y} 
                     className={ this.props.selected ? "place-circle selected" : "place-circle" } 
-                    onMouseDown={this.handleDragStart} />
+                    onMouseDown={this.handleDragStart} 
+                    onDoubleClick={this.handleDoubleClick} />
 
                 <text 
                     x={this.props.x} 
@@ -73,7 +83,8 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                     textAnchor="middle" 
                     dy="0.3em" 
                     className="place-text"
-                    onMouseDown={this.handleDragStart} >
+                    onMouseDown={this.handleDragStart} 
+                    onDoubleClick={this.handleDoubleClick} >
                         {this.props.title} 
                 </text>
             </g>

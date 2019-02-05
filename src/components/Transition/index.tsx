@@ -11,6 +11,7 @@ export interface ITransitionProps {
     to: string[];
     selected: boolean;
     setSelected: (guid: string) => void;
+    setTitle: (guid: string, title: string) => void;
 }
 
 interface ITransitionState {
@@ -33,6 +34,7 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
     }
 
     handleDragStart = (e: any) => {
+        //e.stopPropagation()
         this.props.setSelected(this.props.guid);
         this.setState({
             xMouse: e.pageX,
@@ -58,6 +60,13 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
         document.removeEventListener('mousemove', this.handleDragMove);
         document.removeEventListener('mouseup', this.handleDragEnd);
     }
+
+    handleDoubleClick = () => {
+        var newTitle = prompt('New title?', this.props.title)
+        if (newTitle !== null) {
+            this.props.setTitle(this.props.guid, newTitle as string)
+        }
+    }
  
     render() {
         return (
@@ -69,7 +78,8 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
                     height="50" 
                     fill={this.props.selected ? 'red' : 'black'}
                     className="transition-rect"
-                    onMouseDown={this.handleDragStart} >
+                    onMouseDown={this.handleDragStart} 
+                    onDoubleClick={this.handleDoubleClick} >
                 </rect>
 
                 <text 
@@ -78,7 +88,8 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
                     textAnchor="middle"
                     onMouseDown={this.handleDragStart}
                     className="transition-text"
-                    filter="url(#textBkg)" >
+                    filter="url(#textBkg)" 
+                    onDoubleClick={this.handleDoubleClick}>
                     {this.props.title}
                 </text>
             </g>
