@@ -5,6 +5,7 @@ import { Place, IPlaceProps } from '../Place';
 import { Transition, ITransitionProps } from '../Transition';
 import Line from '../Line';
 import DemoNet from '../../nettemplates/test.js';
+import uuid from 'uuid';
 
 interface IPetriNetViewProps {
 
@@ -101,14 +102,20 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         switch (this.state.toolMode) {
             case ToolMode.Transition: {
                 let transition: ITransitionProps = {
-                    guid: "dsfsd",
-                    title: "New node",
+                    guid: uuid.v4(),
+                    title: "New transition",
                     x: e.pageX,
                     y: e.pageY,
                     updatePosition: this.updatePosition,
                     from: [],
                     to: []
                 }
+
+                var transitions = this.state.transitions
+                transitions.push(transition);
+                this.setState({
+                    transitions: transitions
+                });
             }
             default: {
                 return
