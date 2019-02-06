@@ -23,6 +23,7 @@ interface IPetriNetViewState {
     places: IPlaceProps[];
     transitions: ITransitionProps[];
     toolMode: ToolMode;
+    selectedForConnection: string | undefined;
 }
 
 class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewState> {
@@ -49,6 +50,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             places: places,
             transitions: transitions,
             toolMode: ToolMode.Move,
+            selectedForConnection: undefined
         }
     }
 
@@ -100,8 +102,33 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         });
 
         if (this.state.toolMode === ToolMode.AddConnection) {
-
+            if(this.state.selectedForConnection !== undefined) {
+                this.addConnection(this.state.selectedForConnection, guid)
+            } else {
+                this.setState({
+                    selectedForConnection: guid
+                })
+            }
         }
+    }
+
+    addConnection = (from: string, to: string) => {
+        const places = this.state.places
+        const transitions = this.state.transitions
+
+        transitions.map((trans: ITransitionProps) => {
+            if(trans.guid === from && places.find((p) => p.guid === to) !== undefined) {
+                trans.to.push(to)
+            }
+            else if(trans.guid === to && places.find((p) => p.guid === from) !== undefined) {
+                trans.from.push(from)
+            }
+        })
+        this.setState({
+            places: places,
+            transitions: transitions,
+            selectedForConnection: undefined
+        })
     }
 
     setTitle = (guid: string, title: string) => {
