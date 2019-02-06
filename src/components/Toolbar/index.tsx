@@ -7,6 +7,7 @@ export interface IToolbarProps {
     setModePlace: (e: any) => void;
     setModeAddConnection: (e: any) => void;
     exportModelAsJSON: (e: any) => void;
+    setModeRun: (e: any) => void;
 }
 
 export class Toolbar extends Component<IToolbarProps, {}> {
@@ -27,6 +28,9 @@ export class Toolbar extends Component<IToolbarProps, {}> {
                 </button>
                 <button className="toolbar-button" onClick={this.props.exportModelAsJSON}>
                     Export as JSON
+                </button>
+                <button className="toolbar-button" onClick={this.props.setModeRun}>
+                    Run simulation
                 </button>
             </div>
         );

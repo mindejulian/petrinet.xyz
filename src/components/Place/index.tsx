@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import './index.css';
+import { throws } from 'assert';
 
 export interface IPlaceProps {
     guid: string;
     title: string;
     x: number;
     y: number;
+    tokens: number;
     updatePosition: (guid: string, x: number, y: number) => void;
     selected: boolean;
     setSelected: (guid: string) => void;
@@ -66,6 +68,18 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
         }
     }
 
+    elementsForTokens = () => {
+        return Array.from({length: this.props.tokens}, (x, i) => i)
+                    .map((tokenNo: number) => {
+                            return (
+                            <circle 
+                                r="4"
+                                cx={this.props.x - 20 + ((tokenNo % 5) * 10) }
+                                cy={this.props.y - 15 + Math.floor(tokenNo / 5) * 10}
+                                className="place-token" />)
+                        })
+    }
+
     render() {
         return (
             <g>
@@ -76,10 +90,11 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                     className={ this.props.selected ? "place-circle selected" : "place-circle" } 
                     onMouseDown={this.handleDragStart} 
                     onDoubleClick={this.handleDoubleClick} />
+                { this.elementsForTokens() }
 
                 <text 
                     x={this.props.x} 
-                    y={this.props.y} 
+                    y={this.props.y + 65} 
                     textAnchor="middle" 
                     dy="0.3em" 
                     className="place-text"

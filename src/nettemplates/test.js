@@ -4,6 +4,7 @@ const DemoNet = {
             title: "Place 1",
             x: 200,
             y: 100,
+            tokens: 0,
             guid: "a243d80f-3fbe-4ca5-8839-6000d833f9df",
             selected: false
         },
@@ -11,6 +12,7 @@ const DemoNet = {
             title: "Place 2",
             x: 500,
             y: 100,
+            tokens: 0,
             guid: "4323f3ef-ed1d-48bd-a33e-de921bfb375c",
             selected: false
         },
@@ -18,6 +20,7 @@ const DemoNet = {
             title: "Place 3",
             x: 800,
             y: 100,
+            tokens: 0,
             guid: "83e0d3be-95d5-49ef-94ec-ad0c215f4f06",
             selected: false
         }

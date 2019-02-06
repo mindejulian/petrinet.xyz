@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './index.css';
+import { throws } from 'assert';
 
 export interface ITransitionProps {
     guid: string;
@@ -12,6 +13,7 @@ export interface ITransitionProps {
     selected: boolean;
     setSelected: (guid: string) => void;
     setTitle: (guid: string, title: string) => void;
+    executeTransition: (guid: string) => void;
 }
 
 interface ITransitionState {
@@ -34,7 +36,8 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
     }
 
     handleDragStart = (e: any) => {
-        //e.stopPropagation()
+        e.stopPropagation()
+        this.props.executeTransition(this.props.guid)
         this.props.setSelected(this.props.guid);
         this.setState({
             xMouse: e.pageX,

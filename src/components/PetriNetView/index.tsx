@@ -15,7 +15,8 @@ enum ToolMode {
     Move,
     Transition,
     Place,
-    AddConnection
+    AddConnection,
+    Run
 }
 
 interface IPetriNetViewState {
@@ -23,7 +24,6 @@ interface IPetriNetViewState {
     transitions: ITransitionProps[];
     toolMode: ToolMode;
 }
-
 
 class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewState> {
     
@@ -42,6 +42,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             transition.selected = false;
             transition.setSelected = this.setSelected;
             transition.setTitle = this.setTitle;
+            transition.executeTransition = this.executeTransition;
             return transition;
         })
         this.state = {
@@ -122,6 +123,46 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         });
     }
 
+    executeTransition = (guid: string) => {
+        if (this.state.toolMode !== ToolMode.Run) { return }
+        const transitions = this.state.transitions;
+        const transToExecute = transitions.find((trans: ITransitionProps) => trans.guid === guid)
+        const places = this.state.places;
+        if (transToExecute !== undefined && 
+            this.canExecute(transToExecute)) {
+            
+            transToExecute.from.map((placeGuid: string) => {
+                places.map((place: IPlaceProps) => {
+                    if (place.guid === placeGuid && place.tokens > 0) {
+                        place.tokens -= 1
+                    }
+                })
+            })
+            transToExecute.to.map((placeGuid: string) => {
+                places.map((place: IPlaceProps) => {
+                    if (place.guid === placeGuid) {
+                        place.tokens += 1
+                    }
+                })
+            })
+            this.setState({
+                places: places
+            })
+        }
+    }
+
+    canExecute = (trans: ITransitionProps) => {
+        var result: boolean = true
+
+        trans.from.forEach((placeId) => {
+            const place = this.state.places.find((place: IPlaceProps) => place.guid === placeId)
+            if (place !== undefined && place.tokens < 1) {
+                result = false
+            }
+        })
+        return result
+    }
+
     // Toolbar callbacks
 
     setModeMove = (e: any) => {
@@ -145,6 +186,12 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     setModeConnection = (e: any) => {
         this.setState({
             toolMode: ToolMode.AddConnection
+        })
+    }
+
+    setModeRun = (e: any) => {
+        this.setState({
+            toolMode: ToolMode.Run
         })
     }
 
@@ -179,7 +226,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     setSelected: this.setSelected,
                     from: [],
                     to: [],
-                    setTitle: this.setTitle
+                    setTitle: this.setTitle,
+                    executeTransition: this.executeTransition
                 }
                 var transitions = this.state.transitions
                 transitions.push(transition);
@@ -196,6 +244,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     title: "New place",
                     x: e.pageX,
                     y: e.pageY,
+                    tokens: 0,
                     updatePosition: this.updatePosition,
                     selected: false,
                     setSelected: this.setSelected,
@@ -228,6 +277,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 title={placeProps.title} 
                 x={placeProps.x} 
                 y={placeProps.y}
+                tokens={placeProps.tokens}
                 updatePosition={placeProps.updatePosition}
                 selected={placeProps.selected}
                 setSelected={placeProps.setSelected}
@@ -251,6 +301,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     selected={transProps.selected}
                     setSelected={transProps.setSelected}
                     setTitle={transProps.setTitle}
+                    executeTransition={transProps.executeTransition}
                     key={transProps.guid} />
             );
         })
@@ -327,7 +378,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 setModeTransition={this.setModeTransition} 
                 setModePlace={this.setModePlace}
                 setModeAddConnection={this.setModeConnection}
-                exportModelAsJSON={this.exportModelAsJSON} />
+                exportModelAsJSON={this.exportModelAsJSON} 
+                setModeRun={this.setModeRun} />
             <svg 
                 width="1000" 
                 height="1000" 

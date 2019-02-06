@@ -1,11 +1,11 @@
 
 .place-circle {
-    fill: #0099ff;
+    fill: #95b1c4;
     cursor: move;
 }
 
 .place-circle.selected {
-    fill: #ff4444;
+    fill: #a37575;
 }
 
 .place-text { 
@@ -13,6 +13,10 @@
     font-size: 1.3rem;
     font-family: sans-serif;
     cursor: move;
+}
+
+.place-token {
+    fill: #f00;
 }
 
 
