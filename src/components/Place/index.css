@@ -1,17 +1,27 @@
 
 .place-circle {
-    fill: #95b1c4;
+    fill: #ddd;
+    stroke: black;
+    stroke-width: 2px;
     cursor: move;
 }
 
 .place-circle.selected {
-    fill: #a37575;
+    fill: #a08a8a;
 }
 
 .place-text { 
     fill: #000;
-    font-size: 1.3rem;
+    font-size: 1rem;
     font-family: sans-serif;
+    cursor: move;
+}
+
+.place-token-number {
+    fill: #f00;
+    font-size: 36px;
+    font-family: sans-serif;
+    font-weight: bold;
     cursor: move;
 }
 

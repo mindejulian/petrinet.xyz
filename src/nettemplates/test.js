@@ -12,7 +12,7 @@ const DemoNet = {
             title: "Place 2",
             x: 500,
             y: 100,
-            tokens: 0,
+            tokens: 20,
             guid: "4323f3ef-ed1d-48bd-a33e-de921bfb375c",
             selected: false
         },

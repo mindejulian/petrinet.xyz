@@ -4,14 +4,14 @@ import { Toolbar, IToolbarProps } from '../Toolbar';
 import { Place, IPlaceProps } from '../Place';
 import { Transition, ITransitionProps } from '../Transition';
 import Line from '../Line';
-import DemoNet from '../../nettemplates/test.js';
+import DemoNet from '../../nettemplates/atv.js';
 import uuid from 'uuid';
 
 interface IPetriNetViewProps {
 
 }
 
-enum ToolMode {
+export enum ToolMode {
     Move,
     Transition,
     Place,
@@ -180,7 +180,6 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
 
     canExecute = (trans: ITransitionProps) => {
         var result: boolean = true
-
         trans.from.forEach((placeId) => {
             const place = this.state.places.find((place: IPlaceProps) => place.guid === placeId)
             if (place !== undefined && place.tokens < 1) {
@@ -275,7 +274,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     updatePosition: this.updatePosition,
                     selected: false,
                     setSelected: this.setSelected,
-                    setTitle: this.setTitle
+                    setTitle: this.setTitle,
+                    imageUrl: undefined
                 }
                 var places = this.state.places
                 places.push(place)
@@ -295,6 +295,9 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         this.setSelected("none")
     }
 
+    handleKeyPress = (e: any) => {
+        console.log(e.key)
+    }
 
     getPlaceElements = () => {
         return this.state.places.map((placeProps) => {
@@ -309,7 +312,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 selected={placeProps.selected}
                 setSelected={placeProps.setSelected}
                 setTitle={placeProps.setTitle}
-                key={placeProps.guid}/>
+                key={placeProps.guid} 
+                imageUrl={placeProps.imageUrl} />
             );
         });
     }
@@ -380,6 +384,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                         y1={place.y} 
                         x2={transProps.x + 6} 
                         y2={transProps.y + 25}
+                        key={transProps.guid + '-' + place.guid}
                         toTransition={toTransition} />
                 )
             }
@@ -389,6 +394,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     y1={transProps.y + 25} 
                     x2={place.x} 
                     y2={place.y}
+                    key={transProps.guid + '-' + place.guid}
                     toTransition={toTransition} />
             )
         } 
@@ -399,8 +405,10 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         return (
         <div 
             className="petri-net-view" 
-            onMouseDown={this.handleBkgClick}>
+            onMouseDown={this.handleBkgClick} 
+            onKeyPress={this.handleKeyPress}>
             <Toolbar
+                currentMode={this.state.toolMode}
                 setModeMove={this.setModeMove}
                 setModeTransition={this.setModeTransition} 
                 setModePlace={this.setModePlace}
@@ -411,6 +419,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 width="1000" 
                 height="1000" 
                 viewBox="0 0 1000 1000" 
+                className="petrinet"
                 onMouseDown={this.handleMouseDown} >
                 { this.getSVGDefs() }
                 { this.getLineElements() }

@@ -12,6 +12,7 @@ export interface IPlaceProps {
     selected: boolean;
     setSelected: (guid: string) => void;
     setTitle: (guid: string, title: string) => void;
+    imageUrl?: string;
 }
 
 interface IPlaceState {
@@ -69,6 +70,17 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
     }
 
     elementsForTokens = () => {
+        if (this.props.tokens > 20) {
+            return (<text
+                x={this.props.x}
+                y={this.props.y + 10}
+                textAnchor="middle"
+                className="place-token-number"
+                onMouseDown={this.handleDragStart} 
+                onDoubleClick={this.handleDoubleClick} >
+                {this.props.tokens}
+            </text>)
+        }
         return Array.from({length: this.props.tokens}, (x, i) => i)
                     .map((tokenNo: number) => {
                             return (
@@ -76,20 +88,37 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                                 r="4"
                                 cx={this.props.x - 20 + ((tokenNo % 5) * 10) }
                                 cy={this.props.y - 15 + Math.floor(tokenNo / 5) * 10}
+                                key={tokenNo}
                                 className="place-token" />)
                         })
+    }
+
+    mainElement = () => {
+        if (this.props.imageUrl !== undefined) {
+            return (<image 
+                x={this.props.x - 48} 
+                y={this.props.y - 25} 
+                href={this.props.imageUrl}
+                width="96" 
+                height="51"
+                onMouseDown={this.handleDragStart} 
+                onDoubleClick={this.handleDoubleClick}/> )
+        } else {
+            return (<circle 
+                r="40" 
+                cx={this.props.x} 
+                cy={this.props.y} 
+                className={ this.props.selected ? "place-circle selected" : "place-circle" } 
+                onMouseDown={this.handleDragStart} 
+                onDoubleClick={this.handleDoubleClick} />)
+        }
+
     }
 
     render() {
         return (
             <g>
-                <circle 
-                    r="50" 
-                    cx={this.props.x} 
-                    cy={this.props.y} 
-                    className={ this.props.selected ? "place-circle selected" : "place-circle" } 
-                    onMouseDown={this.handleDragStart} 
-                    onDoubleClick={this.handleDoubleClick} />
+                { this.mainElement() }
                 { this.elementsForTokens() }
 
                 <text 
