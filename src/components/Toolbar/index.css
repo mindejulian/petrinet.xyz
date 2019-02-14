@@ -9,3 +9,10 @@
 .toolbar-button.selected {
     background: #999;
 }
+
+.toolbar {
+    position: absolute;
+    top: 0;
+    padding: 0 8px;
+    background: #ddd;
+}
