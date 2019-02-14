@@ -67,9 +67,11 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
     }
 
     handleDoubleClick = () => {
-        var newTitle = prompt('New title?', this.props.title)
-        if (newTitle !== null) {
-            this.props.setTitle(this.props.guid, newTitle as string)
+        if(this.props.toolMode.toString() !== ToolMode.Run.toString()) {
+            var newTitle = prompt('New title?', this.props.title)
+            if (newTitle !== null) {
+                this.props.setTitle(this.props.guid, newTitle as string)
+            }
         }
     }
 
