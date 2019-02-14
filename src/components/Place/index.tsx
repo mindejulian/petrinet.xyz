@@ -124,7 +124,7 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                 height="51"
                 className={ this.stateClasses() } 
                 onMouseDown={this.handleDragStart} 
-                onDoubleClick={this.handleDoubleClick}/> )
+                onDoubleClick={this.handleDoubleClick} /> )
         } else {
             return (<circle 
                 r="40" 

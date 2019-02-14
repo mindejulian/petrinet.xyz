@@ -129,6 +129,22 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         }
     }
 
+    deleteSelected = () => {
+        var places = this.state.places;
+        places = places.filter((place: IPlaceProps) => {
+            return !place.selected
+        })
+        var transitions = this.state.transitions;
+        transitions = transitions.filter((trans: ITransitionProps) => {
+            return !trans.selected
+        })
+
+        this.setState({
+            places: places,
+            transitions: transitions
+        })
+    }
+
     addConnection = (from: string, to: string) => {
         const places = this.state.places
         const transitions = this.state.transitions
@@ -320,6 +336,17 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
 
     handleKeyPress = (e: any) => {
         console.log(e.key)
+        if (e.key === 'Backspace' || e.key === 'Delete') {
+            this.deleteSelected()
+        }
+    }
+
+    componentDidMount = () => {
+        document.addEventListener("keydown", this.handleKeyPress, false);
+    }
+
+    componentWillUnmount = () => {
+        document.removeEventListener("keydown", this.handleKeyPress, false);
     }
 
     getPlaceElements = () => {
