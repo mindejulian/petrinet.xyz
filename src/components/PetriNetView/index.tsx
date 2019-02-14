@@ -19,11 +19,17 @@ export enum ToolMode {
     Run
 }
 
+interface ViewSize {
+    width: number;
+    height: number;
+}
+
 interface IPetriNetViewState {
     places: IPlaceProps[];
     transitions: ITransitionProps[];
     toolMode: ToolMode;
     selectedForConnection: string | undefined;
+    viewSize: ViewSize;
 }
 
 class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewState> {
@@ -52,7 +58,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             places: places,
             transitions: transitions,
             toolMode: ToolMode.Move,
-            selectedForConnection: undefined
+            selectedForConnection: undefined,
+            viewSize: demoNet.viewSize
         }
     }
 
@@ -74,10 +81,18 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             }
             return transition;
         })
+        const viewSize = this.state.viewSize;
+        if (x > viewSize.width - 100) {
+            viewSize.width = x + 100
+        }
+        if (y > viewSize.height - 100) {
+            viewSize.height = y + 100
+        }
 
         this.setState({
             places: places,
-            transitions: transitions
+            transitions: transitions,
+            viewSize: viewSize
         });
     }
 
@@ -426,9 +441,9 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 exportModelAsJSON={this.exportModelAsJSON} 
                 setModeRun={this.setModeRun} />
             <svg 
-                width="1000" 
-                height="1000" 
-                viewBox="0 0 1000 1000" 
+                width={ this.state.viewSize.width }
+                height={ this.state.viewSize.height } 
+                viewBox={ "0 0 " + this.state.viewSize.width + " " + this.state.viewSize.height }
                 className="petrinet"
                 onMouseDown={this.handleMouseDown} >
                 { this.getSVGDefs() }
