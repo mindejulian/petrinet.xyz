@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './index.css';
 import { throws } from 'assert';
+import { ToolMode } from '../PetriNetView';
 
 export interface IPlaceProps {
     guid: string;
@@ -13,6 +14,7 @@ export interface IPlaceProps {
     setSelected: (guid: string) => void;
     setTitle: (guid: string, title: string) => void;
     imageUrl?: string;
+    toolMode: ToolMode;
 }
 
 interface IPlaceState {
@@ -93,6 +95,23 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                         })
     }
 
+    stateClasses = () => {
+        var classes = ""
+        switch (this.props.toolMode) {
+            case ToolMode.Move: {
+                classes += " circle-mode-move"
+                break
+            }
+            case ToolMode.AddConnection: {
+                classes += " circle-mode-add-connection"
+            }
+        }
+        if (this.props.selected) {
+            classes += " selected"
+        }
+        return classes
+    }
+
     mainElement = () => {
         if (this.props.imageUrl !== undefined) {
             return (<image 
@@ -101,6 +120,7 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                 href={this.props.imageUrl}
                 width="96" 
                 height="51"
+                className={ this.stateClasses() } 
                 onMouseDown={this.handleDragStart} 
                 onDoubleClick={this.handleDoubleClick}/> )
         } else {
@@ -108,7 +128,7 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                 r="40" 
                 cx={this.props.x} 
                 cy={this.props.y} 
-                className={ this.props.selected ? "place-circle selected" : "place-circle" } 
+                className={ "place-circle" + this.stateClasses() } 
                 onMouseDown={this.handleDragStart} 
                 onDoubleClick={this.handleDoubleClick} />)
         }

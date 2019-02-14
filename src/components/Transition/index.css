@@ -6,3 +6,14 @@
     cursor: move;
 }
 
+.trans-mode-move {
+    cursor: move;
+}
+
+.trans-mode-add-connection {
+    cursor: pointer;
+}
+
+.trans-mode-run {
+    cursor: pointer;
+}

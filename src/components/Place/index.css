@@ -3,7 +3,14 @@
     fill: #ddd;
     stroke: black;
     stroke-width: 2px;
+}
+
+.circle-mode-move {
     cursor: move;
+}
+
+.circle-mode-add-connection {
+    cursor: pointer;
 }
 
 .place-circle.selected {
