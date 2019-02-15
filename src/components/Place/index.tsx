@@ -90,11 +90,29 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                             return (
                             <circle 
                                 r="4"
-                                cx={this.props.x - 20 + ((tokenNo % 5) * 10) }
-                                cy={this.props.y - 15 + Math.floor(tokenNo / 5) * 10}
+                                cx={this.props.x + this.tokenX(tokenNo, this.props.tokens) }
+                                cy={this.props.y + this.tokenY(tokenNo, this.props.tokens)}
                                 key={tokenNo}
                                 className="place-token" />)
                         })
+    }
+
+    tokenX = (tokenNo: number, tokenCount: number) => {
+        if (tokenCount <= 5) {
+            return (tokenNo * -10) + (tokenCount -1)*5
+        }
+        return (-20 + ((tokenNo % 5) * 10))
+    }
+
+    tokenY = (tokenNo: number, tokenCount: number) => {
+        const numRows = Math.ceil(tokenCount / 5)
+        if (numRows == 1) {
+            return 0
+        }
+        if (numRows == 2) {
+            return (Math.floor(tokenNo / 5) * 10) -5
+        }
+        return (-15 + Math.floor(tokenNo / 5) * 10)
     }
 
     stateClasses = () => {

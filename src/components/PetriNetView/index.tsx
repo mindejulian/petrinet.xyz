@@ -4,7 +4,7 @@ import { Toolbar, IToolbarProps } from '../Toolbar';
 import { Place, IPlaceProps } from '../Place';
 import { Transition, ITransitionProps } from '../Transition';
 import Line from '../Line';
-import DemoNet from '../../nettemplates/mutex.js';
+import DemoNet from '../../nettemplates/pubsub.js';
 import uuid from 'uuid';
 
 interface IPetriNetViewProps {
