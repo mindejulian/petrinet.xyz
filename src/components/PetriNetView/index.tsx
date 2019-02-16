@@ -24,7 +24,7 @@ interface ViewSize {
     height: number;
 }
 
-interface IModel {
+export interface IModel {
     places: IPlaceProps[];
     transitions: ITransitionProps[];
 }
