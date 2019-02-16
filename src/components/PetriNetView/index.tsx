@@ -4,7 +4,7 @@ import { Toolbar, IToolbarProps } from '../Toolbar';
 import { Place, IPlaceProps } from '../Place';
 import { Transition, ITransitionProps } from '../Transition';
 import Line from '../Line';
-import DemoNet from '../../nettemplates/pubsub.js';
+import DemoNet from '../../nettemplates/demo.js';
 import uuid from 'uuid';
 
 interface IPetriNetViewProps {
@@ -24,20 +24,24 @@ interface ViewSize {
     height: number;
 }
 
-interface IPetriNetViewState {
+interface IModel {
     places: IPlaceProps[];
     transitions: ITransitionProps[];
+}
+
+interface IPetriNetViewState {
+    model: IModel;
     toolMode: ToolMode;
     selectedForConnection: string | undefined;
     viewSize: ViewSize;
 }
 
 class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewState> {
-    
+
     constructor(props: IPetriNetViewProps) {
         super(props);
         var demoNet = DemoNet;
-        let places = demoNet.places.map((place: any) => {
+        let places = demoNet.model.places.map((place: any) => {
             place.updatePosition = this.updatePosition;
             place.selected = false;
             place.setSelected = this.setSelected;
@@ -45,7 +49,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             place.toolMode = ToolMode.Move
             return place;
         });
-        let transitions = demoNet.transitions.map((transition: any) => {
+        let transitions = demoNet.model.transitions.map((transition: any) => {
             transition.updatePosition = this.updatePosition;
             transition.selected = false;
             transition.setSelected = this.setSelected;
@@ -55,17 +59,19 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             return transition;
         })
         this.state = {
-            places: places,
-            transitions: transitions,
+            model: {
+                places: places,
+                transitions: transitions
+            },
             toolMode: ToolMode.Move,
             selectedForConnection: undefined,
-            viewSize: demoNet.viewSize
+            viewSize: { width: 1000, height: 1000 }
         }
     }
 
     updatePosition = (guid: string, x: number, y: number) => {
-        if (this.state.toolMode !== ToolMode.Move ) { return }
-        const places = this.state.places;
+        if (this.state.toolMode !== ToolMode.Move) { return }
+        const places = this.state.model.places;
         places.map((place: IPlaceProps) => {
             if (place.guid === guid) {
                 place.x = x;
@@ -73,7 +79,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             }
             return place;
         });
-        const transitions = this.state.transitions;
+        const transitions = this.state.model.transitions;
         transitions.map((transition: ITransitionProps) => {
             if (transition.guid === guid) {
                 transition.x = x;
@@ -90,22 +96,24 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         }
 
         this.setState({
-            places: places,
-            transitions: transitions,
+            model: {
+                places: places,
+                transitions: transitions
+            },
             viewSize: viewSize
         });
     }
 
     setSelected = (guid: string) => {
-        const places = this.state.places;
+        const places = this.state.model.places;
         places.map((place: IPlaceProps) => {
-            if(place.guid === guid) {
+            if (place.guid === guid) {
                 place.selected = true;
             } else {
                 place.selected = false;
             }
         });
-        const transitions = this.state.transitions;
+        const transitions = this.state.model.transitions;
         transitions.map((transition: ITransitionProps) => {
             if (transition.guid === guid) {
                 transition.selected = true;
@@ -114,12 +122,14 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             }
         });
         this.setState({
-            places: places,
-            transitions: transitions
+            model: {
+                places: places,
+                transitions: transitions
+            }
         });
 
         if (this.state.toolMode === ToolMode.AddConnection) {
-            if(this.state.selectedForConnection !== undefined) {
+            if (this.state.selectedForConnection !== undefined) {
                 this.addConnection(this.state.selectedForConnection, guid)
             } else {
                 this.setState({
@@ -130,36 +140,40 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     }
 
     deleteSelected = () => {
-        var places = this.state.places;
+        var places = this.state.model.places;
         places = places.filter((place: IPlaceProps) => {
             return !place.selected
         })
-        var transitions = this.state.transitions;
+        var transitions = this.state.model.transitions;
         transitions = transitions.filter((trans: ITransitionProps) => {
             return !trans.selected
         })
 
         this.setState({
-            places: places,
-            transitions: transitions
+            model: {
+                places: places,
+                transitions: transitions
+            }
         })
     }
 
     addConnection = (from: string, to: string) => {
-        const places = this.state.places
-        const transitions = this.state.transitions
+        const places = this.state.model.places
+        const transitions = this.state.model.transitions
 
         transitions.map((trans: ITransitionProps) => {
-            if(trans.guid === from && places.find((p) => p.guid === to) !== undefined) {
+            if (trans.guid === from && places.find((p) => p.guid === to) !== undefined) {
                 trans.to.push(to)
             }
-            else if(trans.guid === to && places.find((p) => p.guid === from) !== undefined) {
+            else if (trans.guid === to && places.find((p) => p.guid === from) !== undefined) {
                 trans.from.push(from)
             }
         })
         this.setState({
-            places: places,
-            transitions: transitions,
+            model: {
+                places: places,
+                transitions: transitions
+            },
             selectedForConnection: undefined
         })
 
@@ -167,32 +181,34 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     }
 
     setTitle = (guid: string, title: string) => {
-        const places = this.state.places;
+        const places = this.state.model.places;
         places.map((place: IPlaceProps) => {
-            if(place.guid === guid) {
+            if (place.guid === guid) {
                 place.title = title;
             }
         });
-        const transitions = this.state.transitions;
+        const transitions = this.state.model.transitions;
         transitions.map((transition: ITransitionProps) => {
             if (transition.guid === guid) {
                 transition.title = title;
-            } 
+            }
         });
         this.setState({
-            places: places,
-            transitions: transitions
+            model: {
+                places: places,
+                transitions: transitions
+            }
         });
     }
 
     executeTransition = (guid: string) => {
         if (this.state.toolMode !== ToolMode.Run) { return }
-        const transitions = this.state.transitions;
+        const transitions = this.state.model.transitions;
         const transToExecute = transitions.find((trans: ITransitionProps) => trans.guid === guid)
-        const places = this.state.places;
-        if (transToExecute !== undefined && 
+        const places = this.state.model.places;
+        if (transToExecute !== undefined &&
             this.canExecute(transToExecute)) {
-            
+
             transToExecute.from.map((placeGuid: string) => {
                 places.map((place: IPlaceProps) => {
                     if (place.guid === placeGuid && place.tokens > 0) {
@@ -208,7 +224,10 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 })
             })
             this.setState({
-                places: places
+                model: {
+                    places: places,
+                    transitions: this.state.model.transitions
+                }
             })
         }
     }
@@ -216,7 +235,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     canExecute = (trans: ITransitionProps) => {
         var result: boolean = true
         trans.from.forEach((placeId) => {
-            const place = this.state.places.find((place: IPlaceProps) => place.guid === placeId)
+            const place = this.state.model.places.find((place: IPlaceProps) => place.guid === placeId)
             if (place !== undefined && place.tokens < 1) {
                 result = false
             }
@@ -276,7 +295,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     handleMouseDown = (e: any) => {
         switch (this.state.toolMode) {
             case ToolMode.Transition: {
-                const guid = uuid.v4(); 
+                const guid = uuid.v4();
                 let transition: ITransitionProps = {
                     guid: guid,
                     title: "New transition",
@@ -291,11 +310,14 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     executeTransition: this.executeTransition,
                     toolMode: this.state.toolMode
                 }
-                var transitions = this.state.transitions
+                var transitions = this.state.model.transitions
                 transitions.push(transition);
                 this.setSelected(guid);
                 this.setState({
-                    transitions: transitions
+                    model: {
+                        places: this.state.model.places,
+                        transitions: transitions
+                    }
                 });
                 this.setModeMove("")
                 break
@@ -315,11 +337,14 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     imageUrl: undefined,
                     toolMode: this.state.toolMode
                 }
-                var places = this.state.places
+                var places = this.state.model.places
                 places.push(place)
                 this.setSelected(guid)
                 this.setState({
-                    places: places
+                    model: {
+                        places: places,
+                        transitions: this.state.model.transitions
+                    }
                 })
                 this.setModeMove("")
                 break
@@ -350,27 +375,27 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     }
 
     getPlaceElements = () => {
-        return this.state.places.map((placeProps) => {
+        return this.state.model.places.map((placeProps) => {
             return (
-            <Place 
-                guid={placeProps.guid}
-                title={placeProps.title} 
-                x={placeProps.x} 
-                y={placeProps.y}
-                tokens={placeProps.tokens}
-                updatePosition={placeProps.updatePosition}
-                selected={placeProps.selected}
-                setSelected={placeProps.setSelected}
-                setTitle={placeProps.setTitle}
-                key={placeProps.guid} 
-                imageUrl={placeProps.imageUrl}
-                toolMode={this.state.toolMode} />
+                <Place
+                    guid={placeProps.guid}
+                    title={placeProps.title}
+                    x={placeProps.x}
+                    y={placeProps.y}
+                    tokens={placeProps.tokens}
+                    updatePosition={placeProps.updatePosition}
+                    selected={placeProps.selected}
+                    setSelected={placeProps.setSelected}
+                    setTitle={placeProps.setTitle}
+                    key={placeProps.guid}
+                    imageUrl={placeProps.imageUrl}
+                    toolMode={this.state.toolMode} />
             );
         });
     }
 
     getTransitionElements = () => {
-        return this.state.transitions.map((transProps) => {
+        return this.state.model.transitions.map((transProps) => {
             return (
                 <Transition
                     guid={transProps.guid}
@@ -391,7 +416,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     }
 
     getLineElements = () => {
-        return this.state.transitions.flatMap((transProps) => {
+        return this.state.model.transitions.flatMap((transProps) => {
             const fromLines = transProps.from.map((placeId) => this.createLines(transProps, placeId, true));
             const toLines = transProps.to.map((placeId) => this.createLines(transProps, placeId, false));
             return fromLines.concat(toLines);
@@ -400,85 +425,85 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
 
     getSVGDefs = () => {
         return (
-        <defs>
-            <marker 
-                id='placeHead' 
-                orient='auto' 
-                markerWidth='20' 
-                markerHeight='40'
-                refX='20.5' 
-                refY='4'>
-            <path d='M0,0 V8 L4,4 Z' fill='#555' />
-            </marker>
-            <marker 
-                id='transitionHead' 
-                orient='auto' 
-                markerWidth='20' 
-                markerHeight='40'
-                refX='12' 
-                refY='4'>
-            <path d='M0,0 V8 L4,4 Z' fill='#555' />
-            </marker>
-            <filter x="0" y="0" width="1" height="1" id="textBkg">
-                <feFlood floodColor="rgba(255,255,255, 0.58)"/>
-                <feComposite in="SourceGraphic" />
-            </filter>
-        </defs>)
+            <defs>
+                <marker
+                    id='placeHead'
+                    orient='auto'
+                    markerWidth='20'
+                    markerHeight='40'
+                    refX='17.5'
+                    refY='4'>
+                    <path d='M0,0 V8 L4,4 Z' fill='#555' />
+                </marker>
+                <marker
+                    id='transitionHead'
+                    orient='auto'
+                    markerWidth='20'
+                    markerHeight='40'
+                    refX='12'
+                    refY='4'>
+                    <path d='M0,0 V8 L4,4 Z' fill='#555' />
+                </marker>
+                <filter x="0" y="0" width="1" height="1" id="textBkg">
+                    <feFlood floodColor="rgba(238,238,238, 0.58)" />
+                    <feComposite in="SourceGraphic" />
+                </filter>
+            </defs>)
     }
- 
+
     createLines = (transProps: ITransitionProps, placeId: string, toTransition: boolean) => {
-        const place = this.state.places.find((p) => p.guid === placeId)
+        const place = this.state.model.places.find((p) => p.guid === placeId)
         if (place !== undefined) {
             if (toTransition) {
                 return (
-                    <Line 
-                        x1={place.x} 
-                        y1={place.y} 
-                        x2={transProps.x + 6} 
+                    <Line
+                        x1={place.x}
+                        y1={place.y}
+                        x2={transProps.x}
                         y2={transProps.y + 25}
                         key={transProps.guid + '-' + place.guid}
                         toTransition={toTransition} />
                 )
             }
             return (
-                <Line 
-                    x1={transProps.x + 6} 
-                    y1={transProps.y + 25} 
-                    x2={place.x} 
+                <Line
+                    x1={transProps.x}
+                    y1={transProps.y + 25}
+                    x2={place.x}
                     y2={place.y}
                     key={transProps.guid + '-' + place.guid}
                     toTransition={toTransition} />
             )
-        } 
+        }
     }
 
 
     render() {
         return (
-        <div 
-            className="petri-net-view" 
-            onMouseDown={this.handleBkgClick} 
-            onKeyPress={this.handleKeyPress}>
-            <Toolbar
-                currentMode={this.state.toolMode}
-                setModeMove={this.setModeMove}
-                setModeTransition={this.setModeTransition} 
-                setModePlace={this.setModePlace}
-                setModeAddConnection={this.setModeConnection}
-                exportModelAsJSON={this.exportModelAsJSON} 
-                setModeRun={this.setModeRun} />
-            <svg 
-                width={ this.state.viewSize.width }
-                height={ this.state.viewSize.height } 
-                viewBox={ "0 0 " + this.state.viewSize.width + " " + this.state.viewSize.height }
-                className="petrinet"
-                onMouseDown={this.handleMouseDown} >
-                { this.getSVGDefs() }
-                { this.getLineElements() }
-                { this.getPlaceElements() }
-                { this.getTransitionElements() }
-            </svg>
-        </div>
+            <div
+                className="petri-net-view"
+                onMouseDown={this.handleBkgClick}
+                onKeyPress={this.handleKeyPress}>
+                <Toolbar
+                    currentMode={this.state.toolMode}
+                    setModeMove={this.setModeMove}
+                    setModeTransition={this.setModeTransition}
+                    setModePlace={this.setModePlace}
+                    setModeAddConnection={this.setModeConnection}
+                    exportModelAsJSON={this.exportModelAsJSON}
+                    setModeRun={this.setModeRun} />
+                <svg
+                    width={this.state.viewSize.width}
+                    height={this.state.viewSize.height}
+                    viewBox={"0 0 " + this.state.viewSize.width + " " + this.state.viewSize.height}
+                    className="petrinet"
+                    onMouseDown={this.handleMouseDown} >
+                    {this.getSVGDefs()}
+                    {this.getLineElements()}
+                    {this.getPlaceElements()}
+                    {this.getTransitionElements()}
+                </svg>
+            </div>
         );
     }
 }

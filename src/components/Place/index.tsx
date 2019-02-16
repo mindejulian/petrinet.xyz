@@ -163,10 +163,10 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
 
                 <text 
                     x={this.props.x} 
-                    y={this.props.y + 65} 
+                    y={this.props.y + 60} 
                     textAnchor="middle" 
-                    dy="0.3em" 
                     className="place-text"
+                    filter="url(#textBkg)" 
                     onMouseDown={this.handleDragStart} 
                     onDoubleClick={this.handleDoubleClick} >
                         {this.props.title} 

@@ -99,7 +99,7 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
         return (
             <g>
                 <rect 
-                    x={this.props.x} 
+                    x={this.props.x - 6} 
                     y={this.props.y} 
                     width="12" 
                     height="50" 
@@ -111,7 +111,7 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
 
                 <text 
                     x={this.props.x} 
-                    y={this.props.y + 75} 
+                    y={this.props.y + 65} 
                     textAnchor="middle"
                     onMouseDown={this.handleDragStart}
                     className={ "transition-text" + this.stateClasses() }
