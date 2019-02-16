@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './index.css';
 import { throws } from 'assert';
-import { ToolMode } from '../PetriNetView';
+import { ToolMode } from '../../interfaces';
 
 export interface ITransitionProps {
     guid: string;
@@ -67,7 +67,7 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
     }
 
     handleDoubleClick = () => {
-        if(this.props.toolMode.toString() !== ToolMode.Run.toString()) {
+        if (this.props.toolMode.toString() !== ToolMode.Run.toString()) {
             var newTitle = prompt('New title?', this.props.title)
             if (newTitle !== null) {
                 this.props.setTitle(this.props.guid, newTitle as string)
@@ -94,28 +94,28 @@ export class Transition extends Component<ITransitionProps, ITransitionState> {
         }
         return classes
     }
- 
+
     render() {
         return (
             <g>
-                <rect 
-                    x={this.props.x - 6} 
-                    y={this.props.y} 
-                    width="12" 
-                    height="50" 
+                <rect
+                    x={this.props.x - 6}
+                    y={this.props.y}
+                    width="12"
+                    height="50"
                     fill={this.props.selected ? 'red' : 'black'}
-                    className={ "transition-rect" + this.stateClasses() }
-                    onMouseDown={this.handleDragStart} 
+                    className={"transition-rect" + this.stateClasses()}
+                    onMouseDown={this.handleDragStart}
                     onDoubleClick={this.handleDoubleClick} >
                 </rect>
 
-                <text 
-                    x={this.props.x} 
-                    y={this.props.y + 65} 
+                <text
+                    x={this.props.x}
+                    y={this.props.y + 65}
                     textAnchor="middle"
                     onMouseDown={this.handleDragStart}
-                    className={ "transition-text" + this.stateClasses() }
-                    filter="url(#textBkg)" 
+                    className={"transition-text" + this.stateClasses()}
+                    filter="url(#textBkg)"
                     onDoubleClick={this.handleDoubleClick}>
                     {this.props.title}
                 </text>

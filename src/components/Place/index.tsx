@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './index.css';
 import { throws } from 'assert';
-import { ToolMode } from '../PetriNetView';
+import { ToolMode } from '../../interfaces';
 
 export interface IPlaceProps {
     guid: string;
@@ -65,7 +65,7 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
     }
 
     handleDoubleClick = () => {
-        if(this.props.toolMode.toString() !== ToolMode.Run.toString()) {
+        if (this.props.toolMode.toString() !== ToolMode.Run.toString()) {
             var newTitle = prompt('New title?', this.props.title)
             if (newTitle !== null) {
                 this.props.setTitle(this.props.guid, newTitle as string)
@@ -80,26 +80,26 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
                 y={this.props.y + 10}
                 textAnchor="middle"
                 className="place-token-number"
-                onMouseDown={this.handleDragStart} 
+                onMouseDown={this.handleDragStart}
                 onDoubleClick={this.handleDoubleClick} >
                 {this.props.tokens}
             </text>)
         }
-        return Array.from({length: this.props.tokens}, (x, i) => i)
-                    .map((tokenNo: number) => {
-                            return (
-                            <circle 
-                                r="4"
-                                cx={this.props.x + this.tokenX(tokenNo, this.props.tokens) }
-                                cy={this.props.y + this.tokenY(tokenNo, this.props.tokens)}
-                                key={tokenNo}
-                                className="place-token" />)
-                        })
+        return Array.from({ length: this.props.tokens }, (x, i) => i)
+            .map((tokenNo: number) => {
+                return (
+                    <circle
+                        r="4"
+                        cx={this.props.x + this.tokenX(tokenNo, this.props.tokens)}
+                        cy={this.props.y + this.tokenY(tokenNo, this.props.tokens)}
+                        key={tokenNo}
+                        className="place-token" />)
+            })
     }
 
     tokenX = (tokenNo: number, tokenCount: number) => {
         if (tokenCount <= 5) {
-            return (tokenNo * -10) + (tokenCount -1)*5
+            return (tokenNo * -10) + (tokenCount - 1) * 5
         }
         return (-20 + ((tokenNo % 5) * 10))
     }
@@ -110,7 +110,7 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
             return 0
         }
         if (numRows == 2) {
-            return (Math.floor(tokenNo / 5) * 10) -5
+            return (Math.floor(tokenNo / 5) * 10) - 5
         }
         return (-15 + Math.floor(tokenNo / 5) * 10)
     }
@@ -134,22 +134,22 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
 
     mainElement = () => {
         if (this.props.imageUrl !== undefined) {
-            return (<image 
-                x={this.props.x - 48} 
-                y={this.props.y - 25} 
+            return (<image
+                x={this.props.x - 48}
+                y={this.props.y - 25}
                 href={this.props.imageUrl}
-                width="96" 
+                width="96"
                 height="51"
-                className={ this.stateClasses() } 
-                onMouseDown={this.handleDragStart} 
-                onDoubleClick={this.handleDoubleClick} /> )
+                className={this.stateClasses()}
+                onMouseDown={this.handleDragStart}
+                onDoubleClick={this.handleDoubleClick} />)
         } else {
-            return (<circle 
-                r="40" 
-                cx={this.props.x} 
-                cy={this.props.y} 
-                className={ "place-circle" + this.stateClasses() } 
-                onMouseDown={this.handleDragStart} 
+            return (<circle
+                r="40"
+                cx={this.props.x}
+                cy={this.props.y}
+                className={"place-circle" + this.stateClasses()}
+                onMouseDown={this.handleDragStart}
                 onDoubleClick={this.handleDoubleClick} />)
         }
 
@@ -158,18 +158,18 @@ export class Place extends Component<IPlaceProps, IPlaceState> {
     render() {
         return (
             <g>
-                { this.mainElement() }
-                { this.elementsForTokens() }
+                {this.mainElement()}
+                {this.elementsForTokens()}
 
-                <text 
-                    x={this.props.x} 
-                    y={this.props.y + 60} 
-                    textAnchor="middle" 
+                <text
+                    x={this.props.x}
+                    y={this.props.y + 60}
+                    textAnchor="middle"
                     className="place-text"
-                    filter="url(#textBkg)" 
-                    onMouseDown={this.handleDragStart} 
+                    filter="url(#textBkg)"
+                    onMouseDown={this.handleDragStart}
                     onDoubleClick={this.handleDoubleClick} >
-                        {this.props.title} 
+                    {this.props.title}
                 </text>
             </g>
         )

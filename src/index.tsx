@@ -6,6 +6,8 @@ import * as serviceWorker from './serviceWorker';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { appReducer } from './components/PetriNetView/reducers'
+import { RootState, ToolMode } from './interfaces'
+import { enableBatching } from 'redux-batched-actions';
 
 const store = createStore(appReducer)
 
