@@ -1,0 +1,109 @@
+{
+    "places": [
+        {
+            "guid": "481421c2-9f42-483d-a2e5-3d7fbbf89815",
+            "title": "",
+            "x": 122,
+            "y": 268,
+            "tokens": 1,
+            "selected": false,
+            "toolMode": 0
+        },
+        {
+            "guid": "bf48e7c9-6649-4d59-a998-e237b1614e92",
+            "title": "",
+            "x": 372,
+            "y": 274,
+            "tokens": 0,
+            "selected": false,
+            "toolMode": 0
+        },
+        {
+            "guid": "1f606315-da76-4602-b23a-8532062a574b",
+            "title": "Buffer",
+            "x": 494,
+            "y": 352,
+            "tokens": 0,
+            "selected": false,
+            "toolMode": 0
+        },
+        {
+            "guid": "33e9307c-9cda-4ad7-a277-e816c7424538",
+            "title": "",
+            "x": 842,
+            "y": 472,
+            "tokens": 1,
+            "selected": false,
+            "toolMode": 0
+        },
+        {
+            "guid": "2eb7b76b-a14f-40d5-88ff-82c409d65ff3",
+            "title": "",
+            "x": 560,
+            "y": 472,
+            "tokens": 0,
+            "selected": false,
+            "toolMode": 0
+        }
+    ],
+    "transitions": [
+        {
+            "guid": "514b72d9-59f8-40bf-9f81-dca94d48d023",
+            "title": "Produce",
+            "x": 252,
+            "y": 161,
+            "selected": false,
+            "from": [
+                "481421c2-9f42-483d-a2e5-3d7fbbf89815"
+            ],
+            "to": [
+                "bf48e7c9-6649-4d59-a998-e237b1614e92"
+            ],
+            "toolMode": 0
+        },
+        {
+            "guid": "c436c6de-5460-4318-b65f-b4617a44b015",
+            "title": "Put in buffer",
+            "x": 248,
+            "y": 333,
+            "selected": false,
+            "from": [
+                "bf48e7c9-6649-4d59-a998-e237b1614e92"
+            ],
+            "to": [
+                "481421c2-9f42-483d-a2e5-3d7fbbf89815",
+                "1f606315-da76-4602-b23a-8532062a574b"
+            ],
+            "toolMode": 0
+        },
+        {
+            "guid": "b1671978-e498-4bf6-a98b-d85fe49f539c",
+            "title": "Remove from buffer",
+            "x": 705,
+            "y": 383,
+            "selected": false,
+            "from": [
+                "1f606315-da76-4602-b23a-8532062a574b",
+                "33e9307c-9cda-4ad7-a277-e816c7424538"
+            ],
+            "to": [
+                "2eb7b76b-a14f-40d5-88ff-82c409d65ff3"
+            ],
+            "toolMode": 0
+        },
+        {
+            "guid": "09d51143-a085-4d53-b6e9-24bccf131c43",
+            "title": "Consume",
+            "x": 711,
+            "y": 508,
+            "selected": false,
+            "from": [
+                "2eb7b76b-a14f-40d5-88ff-82c409d65ff3"
+            ],
+            "to": [
+                "33e9307c-9cda-4ad7-a277-e816c7424538"
+            ],
+            "toolMode": 0
+        }
+    ]
+}

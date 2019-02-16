@@ -4,7 +4,7 @@ import { Toolbar, IToolbarProps } from '../Toolbar';
 import { Place, IPlaceProps } from '../Place';
 import { Transition, ITransitionProps } from '../Transition';
 import Line from '../Line';
-import DemoNet from '../../nettemplates/demo.js';
+import DemoNet from '../../nettemplates/demo.json';
 import uuid from 'uuid';
 
 interface IPetriNetViewProps {
@@ -41,7 +41,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     constructor(props: IPetriNetViewProps) {
         super(props);
         var demoNet = DemoNet;
-        let places = demoNet.model.places.map((place: any) => {
+        let places = demoNet.places.map((place: any) => {
             place.updatePosition = this.updatePosition;
             place.selected = false;
             place.setSelected = this.setSelected;
@@ -49,7 +49,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             place.toolMode = ToolMode.Move
             return place;
         });
-        let transitions = demoNet.model.transitions.map((transition: any) => {
+        let transitions = demoNet.transitions.map((transition: any) => {
             transition.updatePosition = this.updatePosition;
             transition.selected = false;
             transition.setSelected = this.setSelected;
@@ -279,12 +279,12 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         let filename = "export.json";
         let contentType = "application/json;charset=utf-8;";
         if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-            var blob = new Blob([decodeURIComponent(encodeURI(JSON.stringify(this.state)))], { type: contentType });
+            var blob = new Blob([decodeURIComponent(encodeURI(JSON.stringify(this.state.model)))], { type: contentType });
             navigator.msSaveOrOpenBlob(blob, filename);
         } else {
             var a = document.createElement('a');
             a.download = filename;
-            a.href = 'data:' + contentType + ',' + encodeURIComponent(JSON.stringify(this.state));
+            a.href = 'data:' + contentType + ',' + encodeURIComponent(JSON.stringify(this.state.model));
             a.target = '_blank';
             document.body.appendChild(a);
             a.click();
