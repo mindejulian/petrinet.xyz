@@ -4,41 +4,59 @@ import { ToolMode } from '../../interfaces';
 
 export interface IToolbarProps {
     currentMode: ToolMode;
-    setModeMove: (e: any) => void;
-    setModeTransition: (e: any) => void;
-    setModePlace: (e: any) => void;
-    setModeAddConnection: (e: any) => void;
+    setMode: (mode: ToolMode) => void;
     exportModelAsJSON: (e: any) => void;
-    setModeRun: (e: any) => void;
 }
 
 export class Toolbar extends Component<IToolbarProps, {}> {
+
+    setModeMove = (e: any) => {
+        this.props.setMode(ToolMode.Move)
+    }
+
+    setModeTransition = (e: any) => {
+        this.props.setMode(ToolMode.Transition)
+    }
+
+    setModePlace = (e: any) => {
+        this.props.setMode(ToolMode.Place)
+    }
+
+    setModeConnection = (e: any) => {
+        this.props.setMode(ToolMode.AddConnection)
+    }
+
+    setModeRun = (e: any) => {
+        this.props.setMode(ToolMode.Run)
+    }
+
+
     render() {
         return (
             <div className="toolbar">
                 <button
                     className={"toolbar-button " + (this.props.currentMode.toString() === ToolMode.Move.toString() ? "selected" : "")}
-                    onClick={this.props.setModeMove}>
+                    onClick={this.setModeMove}>
                     Move
                 </button>
                 <button
                     className={"toolbar-button " + (this.props.currentMode.toString() === ToolMode.Transition.toString() ? "selected" : "")}
-                    onClick={this.props.setModeTransition}>
+                    onClick={this.setModeTransition}>
                     Add transition
                 </button>
                 <button
                     className={"toolbar-button " + (this.props.currentMode.toString() === ToolMode.Place.toString() ? "selected" : "")}
-                    onClick={this.props.setModePlace}>
+                    onClick={this.setModePlace}>
                     Add place
                 </button>
                 <button
                     className={"toolbar-button " + (this.props.currentMode.toString() === ToolMode.AddConnection.toString() ? "selected" : "")}
-                    onClick={this.props.setModeAddConnection}>
+                    onClick={this.setModeConnection}>
                     Add connection
                 </button>
                 <button
                     className={"toolbar-button " + (this.props.currentMode.toString() === ToolMode.Run.toString() ? "selected" : "")}
-                    onClick={this.props.setModeRun}>
+                    onClick={this.setModeRun}>
                     Run simulation
                 </button>
 

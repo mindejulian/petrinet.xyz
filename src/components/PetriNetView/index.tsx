@@ -16,7 +16,15 @@ import { connect } from 'react-redux';
 import {
     loadModel,
     setSelected,
-    updatePosition
+    updatePosition,
+    deleteSelected,
+    addConnection,
+    setTitle,
+    setSelectedForConnection,
+    executeTransition,
+    setMode,
+    addPlace,
+    addTransition
 } from './actions';
 
 
@@ -28,11 +36,17 @@ interface IPetriNetViewProps {
     loadModel: (model: IModel) => void;
     setSelected: (guid: string) => void;
     updatePosition: (guid: string, x: number, y: number) => void;
-
+    deleteSelected: () => void;
+    addConnection: (from: string, to: string) => void;
+    setTitle: (guid: string, title: string) => void;
+    setSelectedForConnection: (guid: string) => void;
+    executeTransition: (guid: string) => void;
+    setMode: (mode: ToolMode) => void;
+    addPlace: (place: IPlaceProps) => void;
+    addTransition: (transition: ITransitionProps) => void;
 }
 
 class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewState> {
-
 
     updatePosition = (guid: string, x: number, y: number) => {
         this.props.updatePosition(guid, x, y)
@@ -45,148 +59,28 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             if (this.props.selectedForConnection !== undefined) {
                 this.addConnection(this.props.selectedForConnection, guid)
             } else {
-                this.setState({
-                    selectedForConnection: guid
-                })
+                this.props.setSelectedForConnection(guid)
             }
         }
     }
 
     deleteSelected = () => {
-        var places = this.props.model.places;
-        places = places.filter((place: IPlaceProps) => {
-            return !place.selected
-        })
-        var transitions = this.props.model.transitions;
-        transitions = transitions.filter((trans: ITransitionProps) => {
-            return !trans.selected
-        })
-
-        this.setState({
-            model: {
-                places: places,
-                transitions: transitions
-            }
-        })
+        this.props.deleteSelected()
     }
 
     addConnection = (from: string, to: string) => {
-        const places = this.props.model.places
-        const transitions = this.props.model.transitions
-
-        transitions.map((trans: ITransitionProps) => {
-            if (trans.guid === from && places.find((p) => p.guid === to) !== undefined) {
-                trans.to.push(to)
-            }
-            else if (trans.guid === to && places.find((p) => p.guid === from) !== undefined) {
-                trans.from.push(from)
-            }
-        })
-        this.setState({
-            model: {
-                places: places,
-                transitions: transitions
-            },
-            selectedForConnection: undefined
-        })
-
-        this.setModeMove(undefined)
+        this.props.addConnection(from, to)
     }
 
     setTitle = (guid: string, title: string) => {
-        const places = this.props.model.places;
-        places.map((place: IPlaceProps) => {
-            if (place.guid === guid) {
-                place.title = title;
-            }
-        });
-        const transitions = this.props.model.transitions;
-        transitions.map((transition: ITransitionProps) => {
-            if (transition.guid === guid) {
-                transition.title = title;
-            }
-        });
-        this.setState({
-            model: {
-                places: places,
-                transitions: transitions
-            }
-        });
+        this.props.setTitle(guid, title)
     }
 
     executeTransition = (guid: string) => {
-        if (this.props.toolMode !== ToolMode.Run) { return }
-        const transitions = this.props.model.transitions;
-        const transToExecute = transitions.find((trans: ITransitionProps) => trans.guid === guid)
-        const places = this.props.model.places;
-        if (transToExecute !== undefined &&
-            this.canExecute(transToExecute)) {
-
-            transToExecute.from.map((placeGuid: string) => {
-                places.map((place: IPlaceProps) => {
-                    if (place.guid === placeGuid && place.tokens > 0) {
-                        place.tokens -= 1
-                    }
-                })
-            })
-            transToExecute.to.map((placeGuid: string) => {
-                places.map((place: IPlaceProps) => {
-                    if (place.guid === placeGuid) {
-                        place.tokens += 1
-                    }
-                })
-            })
-            this.setState({
-                model: {
-                    places: places,
-                    transitions: this.props.model.transitions
-                }
-            })
-        }
-    }
-
-    canExecute = (trans: ITransitionProps) => {
-        var result: boolean = true
-        trans.from.forEach((placeId) => {
-            const place = this.props.model.places.find((place: IPlaceProps) => place.guid === placeId)
-            if (place !== undefined && place.tokens < 1) {
-                result = false
-            }
-        })
-        return result
+        this.props.executeTransition(guid)
     }
 
     // Toolbar callbacks
-
-    setModeMove = (e: any) => {
-        this.setState({
-            toolMode: ToolMode.Move
-        })
-    }
-
-    setModeTransition = (e: any) => {
-        this.setState({
-            toolMode: ToolMode.Transition
-        })
-    }
-
-    setModePlace = (e: any) => {
-        this.setState({
-            toolMode: ToolMode.Place
-        })
-    }
-
-    setModeConnection = (e: any) => {
-        this.setState({
-            toolMode: ToolMode.AddConnection
-        })
-    }
-
-    setModeRun = (e: any) => {
-        this.setState({
-            toolMode: ToolMode.Run
-        })
-    }
 
     exportModelAsJSON = (e: any) => {
         let filename = "export.json";
@@ -223,16 +117,9 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     executeTransition: this.executeTransition,
                     toolMode: this.props.toolMode
                 }
-                var transitions = this.props.model.transitions
-                transitions.push(transition);
-                this.setSelected(guid);
-                this.setState({
-                    model: {
-                        places: this.props.model.places,
-                        transitions: transitions
-                    }
-                });
-                this.setModeMove("")
+                this.props.addTransition(transition)
+                this.props.setSelected(guid)
+                this.props.setMode(ToolMode.Move)
                 break
             }
             case ToolMode.Place: {
@@ -250,16 +137,9 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     imageUrl: undefined,
                     toolMode: this.props.toolMode
                 }
-                var places = this.props.model.places
-                places.push(place)
-                this.setSelected(guid)
-                this.setState({
-                    model: {
-                        places: places,
-                        transitions: this.props.model.transitions
-                    }
-                })
-                this.setModeMove("")
+                this.props.addPlace(place)
+                this.props.setSelected(guid)
+                this.props.setMode(ToolMode.Move)
                 break
             }
             default: {
@@ -269,7 +149,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     }
 
     handleBkgClick = () => {
-        this.setSelected("none")
+        this.props.setSelected("none")
     }
 
     handleKeyPress = (e: any) => {
@@ -300,7 +180,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     updatePosition={this.updatePosition}
                     selected={placeProps.selected}
                     setSelected={this.setSelected}
-                    setTitle={placeProps.setTitle}
+                    setTitle={this.setTitle}
                     key={placeProps.guid}
                     imageUrl={placeProps.imageUrl}
                     toolMode={this.props.toolMode} />
@@ -321,7 +201,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     to={transProps.to}
                     selected={transProps.selected}
                     setSelected={this.setSelected}
-                    setTitle={transProps.setTitle}
+                    setTitle={this.setTitle}
                     executeTransition={this.executeTransition}
                     key={transProps.guid}
                     toolMode={this.props.toolMode} />
@@ -400,12 +280,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 onKeyPress={this.handleKeyPress}>
                 <Toolbar
                     currentMode={this.props.toolMode}
-                    setModeMove={this.setModeMove}
-                    setModeTransition={this.setModeTransition}
-                    setModePlace={this.setModePlace}
-                    setModeAddConnection={this.setModeConnection}
-                    exportModelAsJSON={this.exportModelAsJSON}
-                    setModeRun={this.setModeRun} />
+                    setMode={this.props.setMode}
+                    exportModelAsJSON={this.exportModelAsJSON} />
 
                 <span>{this.props.toolMode.toString()}</span>
 
@@ -434,7 +310,15 @@ export default connect(
     }), dispatch => ({
         loadModel: (model: IModel) => dispatch(loadModel(model)),
         setSelected: (guid: string) => dispatch(setSelected(guid)),
-        updatePosition: (guid: string, x: number, y: number) => dispatch(updatePosition(guid, x, y))
+        updatePosition: (guid: string, x: number, y: number) => dispatch(updatePosition(guid, x, y)),
+        deleteSelected: () => dispatch(deleteSelected()),
+        addConnection: (from: string, to: string) => dispatch(addConnection(from, to)),
+        setTitle: (guid: string, title: string) => dispatch(setTitle(guid, title)),
+        setSelectedForConnection: (guid: string) => dispatch(setSelectedForConnection(guid)),
+        executeTransition: (guid: string) => dispatch(executeTransition(guid)),
+        setMode: (mode: ToolMode) => dispatch(setMode(mode)),
+        addPlace: (place: IPlaceProps) => dispatch(addPlace(place)),
+        addTransition: (transition: ITransitionProps) => dispatch(addTransition(transition))
     })
 )(PetriNetView)
 

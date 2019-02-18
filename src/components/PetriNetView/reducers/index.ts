@@ -48,6 +48,7 @@ export function appReducer(
                     })
                 }
             }
+
         case TypeKeys.UPDATE_POSITION:
             if (state.toolMode !== ToolMode.Move) { return state }
             const places = state.model.places;
@@ -81,7 +82,128 @@ export function appReducer(
                     transitions: transitions
                 },
                 viewSize: viewSize
-            };
+            }
+
+        case TypeKeys.DELETE_SELECTED:
+            return {
+                ...state,
+                model: {
+                    places: state.model.places.filter((place: IPlaceProps) => {
+                        return !place.selected
+                    }),
+                    transitions: state.model.transitions.filter((trans: ITransitionProps) => {
+                        return !trans.selected
+                    })
+                }
+            }
+
+        case TypeKeys.ADD_CONNECTION:
+            return {
+                ...state,
+                model: {
+                    places: state.model.places,
+                    transitions: state.model.transitions.map((trans: ITransitionProps) => {
+                        if (trans.guid === action.from && places.find((p) => p.guid === action.to) !== undefined) {
+                            trans.to.push(action.to)
+                        }
+                        else if (trans.guid === action.to && places.find((p) => p.guid === action.from) !== undefined) {
+                            trans.from.push(action.from)
+                        }
+                        return trans
+                    })
+                },
+                selectedForConnection: undefined,
+                toolMode: ToolMode.Move
+            }
+
+        case TypeKeys.SET_TITLE:
+            return {
+                ...state,
+                model: {
+                    places: state.model.places.map((place: IPlaceProps) => {
+                        if (place.guid === action.guid) {
+                            place.title = action.title;
+                        }
+                        return place
+                    }),
+                    transitions: state.model.transitions.map((transition: ITransitionProps) => {
+                        if (transition.guid === action.guid) {
+                            transition.title = action.title;
+                        }
+                        return transition
+                    })
+                }
+            }
+
+        case TypeKeys.SET_SELECTED_FOR_CONNECTION:
+            return {
+                ...state,
+                selectedForConnection: action.guid
+            }
+
+        case TypeKeys.EXECUTE_TRANSITION:
+            if (state.toolMode !== ToolMode.Run) { return state }
+            const transitions2 = state.model.transitions;
+            const transToExecute = transitions2.find((trans: ITransitionProps) => trans.guid === action.guid)
+            const places2 = state.model.places
+            if (transToExecute === undefined) {
+                return state
+            }
+            var canExecute: boolean = true
+            transToExecute.from.forEach((placeId: string) => {
+                const place = state.model.places.find((place: IPlaceProps) => place.guid === placeId)
+                if (place !== undefined && place.tokens < 1) {
+                    canExecute = false
+                }
+            })
+            if (transToExecute !== undefined && canExecute) {
+                transToExecute.from.map((placeGuid: string) => {
+                    places2.map((place: IPlaceProps) => {
+                        if (place.guid === placeGuid && place.tokens > 0) {
+                            place.tokens -= 1
+                        }
+                    })
+                })
+                transToExecute.to.map((placeGuid: string) => {
+                    places2.map((place: IPlaceProps) => {
+                        if (place.guid === placeGuid) {
+                            place.tokens += 1
+                        }
+                    })
+                })
+                return {
+                    ...state,
+                    model: {
+                        places: places2,
+                        transitions: state.model.transitions
+                    }
+                }
+            }
+            return state
+
+        case TypeKeys.SET_MODE:
+            return {
+                ...state,
+                toolMode: action.mode
+            }
+
+        case TypeKeys.ADD_PLACE:
+            return {
+                ...state,
+                model: {
+                    places: [...state.model.places, action.place],
+                    transitions: state.model.transitions
+                }
+            }
+
+        case TypeKeys.ADD_TRANSITION:
+            return {
+                ...state,
+                model: {
+                    places: state.model.places,
+                    transitions: [...state.model.transitions, action.transition]
+                }
+            }
 
         default:
             return state
