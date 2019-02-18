@@ -24,6 +24,8 @@ export interface IPetriNetViewState {
     toolMode: ToolMode;
     selectedForConnection: string | undefined;
     viewSize: ViewSize;
+    mouseX: number;
+    mouseY: number;
 }
 
 export interface RootState {

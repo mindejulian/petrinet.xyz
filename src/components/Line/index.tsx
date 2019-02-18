@@ -14,21 +14,21 @@ class Line extends Component<ILineProps, {}> {
     markerUrl = () => {
         if (this.props.toTransition) {
             return 'url(#transitionHead)'
-        } 
+        }
         return 'url(#placeHead)'
     }
 
     render() {
         return (
-            <g>
-                <path 
-                    markerEnd={this.markerUrl()}
-                    strokeWidth="3"
-                    fill="none"
-                    stroke="black"
-                    d={'M' + this.props.x1 + ',' + this.props.y1 + ' ' + this.props.x2 + ',' + this.props.y2 }>
-                    </path>
-            </g>    
+
+            <path
+                markerEnd={this.markerUrl()}
+                strokeWidth="3"
+                fill="none"
+                stroke="black"
+                d={'M' + this.props.x1 + ',' + this.props.y1 + ' ' + this.props.x2 + ',' + this.props.y2}>
+            </path>
+
         );
     }
 }

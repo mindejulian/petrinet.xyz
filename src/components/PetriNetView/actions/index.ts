@@ -1,5 +1,5 @@
 import { IModel, ToolMode } from "../../../interfaces"
-import { string } from "prop-types";
+import { string, number } from "prop-types";
 import { IPlaceProps } from "../../Place";
 import { ITransitionProps } from "../../Transition";
 
@@ -14,7 +14,8 @@ export enum TypeKeys {
     EXECUTE_TRANSITION = 'EXECUTE_TRANSITION',
     SET_MODE = 'SET_MODE',
     ADD_PLACE = 'ADD_PLACE',
-    ADD_TRANSITION = 'ADD_TRANSITION'
+    ADD_TRANSITION = 'ADD_TRANSITION',
+    SET_MOUSE_POS = 'SET_MOUSE_POS'
 }
 
 export type ActionTypes =
@@ -28,7 +29,8 @@ export type ActionTypes =
     ExecuteTransition |
     SetMode |
     AddPlace |
-    AddTransition;
+    AddTransition |
+    SetMousePosition;
 
 export interface LoadModel {
     type: TypeKeys.LOAD_MODEL,
@@ -86,6 +88,12 @@ export interface AddPlace {
 export interface AddTransition {
     type: TypeKeys.ADD_TRANSITION,
     transition: ITransitionProps
+}
+
+export interface SetMousePosition {
+    type: TypeKeys.SET_MOUSE_POS,
+    x: number,
+    y: number
 }
 
 
@@ -169,5 +177,13 @@ export function addTransition(transition: ITransitionProps): AddTransition {
     return {
         type: TypeKeys.ADD_TRANSITION,
         transition: transition
+    }
+}
+
+export function setMousePosition(x: number, y: number): SetMousePosition {
+    return {
+        type: TypeKeys.SET_MOUSE_POS,
+        x: x,
+        y: y
     }
 }

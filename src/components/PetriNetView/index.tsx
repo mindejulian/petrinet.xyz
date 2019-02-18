@@ -24,7 +24,8 @@ import {
     executeTransition,
     setMode,
     addPlace,
-    addTransition
+    addTransition,
+    setMousePosition
 } from './actions';
 
 
@@ -33,6 +34,8 @@ interface IPetriNetViewProps {
     toolMode: ToolMode;
     selectedForConnection: string | undefined;
     viewSize: ViewSize;
+    mouseX: number;
+    mouseY: number;
     loadModel: (model: IModel) => void;
     setSelected: (guid: string) => void;
     updatePosition: (guid: string, x: number, y: number) => void;
@@ -44,6 +47,7 @@ interface IPetriNetViewProps {
     setMode: (mode: ToolMode) => void;
     addPlace: (place: IPlaceProps) => void;
     addTransition: (transition: ITransitionProps) => void;
+    setMousePosition: (x: number, y: number) => void;
 }
 
 class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewState> {
@@ -56,8 +60,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         this.props.setSelected(guid)
 
         if (this.props.toolMode === ToolMode.AddConnection) {
-            if (this.props.selectedForConnection !== undefined) {
-                this.addConnection(this.props.selectedForConnection, guid)
+            if (this.props.selectedForConnection) {
+                this.props.addConnection(this.props.selectedForConnection, guid)
             } else {
                 this.props.setSelectedForConnection(guid)
             }
@@ -66,10 +70,6 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
 
     deleteSelected = () => {
         this.props.deleteSelected()
-    }
-
-    addConnection = (from: string, to: string) => {
-        this.props.addConnection(from, to)
     }
 
     setTitle = (guid: string, title: string) => {
@@ -118,7 +118,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     toolMode: this.props.toolMode
                 }
                 this.props.addTransition(transition)
-                this.props.setSelected(guid)
+                this.setSelected(guid)
                 this.props.setMode(ToolMode.Move)
                 break
             }
@@ -138,7 +138,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     toolMode: this.props.toolMode
                 }
                 this.props.addPlace(place)
-                this.props.setSelected(guid)
+                this.setSelected(guid)
                 this.props.setMode(ToolMode.Move)
                 break
             }
@@ -149,7 +149,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     }
 
     handleBkgClick = () => {
-        this.props.setSelected("none")
+        this.setSelected("none")
     }
 
     handleKeyPress = (e: any) => {
@@ -159,13 +159,19 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         }
     }
 
+    handleMouseMove = (e: any) => {
+        this.props.setMousePosition(e.pageX, e.pageY)
+    }
+
     componentDidMount = () => {
         document.addEventListener("keydown", this.handleKeyPress, false);
+        document.addEventListener("mousemove", this.handleMouseMove)
         this.props.loadModel(DemoNet as IModel);
     }
 
     componentWillUnmount = () => {
         document.removeEventListener("keydown", this.handleKeyPress, false);
+        document.removeEventListener("mousemove", this.handleMouseMove)
     }
 
     getPlaceElements = () => {
@@ -271,6 +277,40 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         }
     }
 
+    selectedForConnectionPosition = () => {
+        if (!this.props.selectedForConnection) { return { x: 0, y: 0 } }
+        const selectedPlace = this.props.model.places.find(place => place.guid === this.props.selectedForConnection)
+        if (selectedPlace) {
+            return selectedPlace
+        }
+        const selectedTransition = this.props.model.transitions.find(trans => trans.guid === this.props.selectedForConnection)
+        if (selectedTransition) {
+            return selectedTransition
+        }
+        return { x: 0, y: 0 }
+    }
+
+    renderModeSpecificItems = () => {
+        switch (this.props.toolMode) {
+            case ToolMode.AddConnection:
+                if (this.props.selectedForConnection) {
+                    return (
+                        <Line
+                            x1={this.selectedForConnectionPosition().x}
+                            y1={this.selectedForConnectionPosition().y}
+                            x2={this.props.mouseX}
+                            y2={this.props.mouseY}
+                            toTransition={true}
+                        />)
+                } else {
+                    return null
+                }
+                break
+            default:
+                return null
+        }
+    }
+
 
     render() {
         return (
@@ -283,8 +323,6 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     setMode={this.props.setMode}
                     exportModelAsJSON={this.exportModelAsJSON} />
 
-                <span>{this.props.toolMode.toString()}</span>
-
                 <svg
                     width={this.props.viewSize.width}
                     height={this.props.viewSize.height}
@@ -293,6 +331,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     onMouseDown={this.handleMouseDown} >
                     {this.getSVGDefs()}
                     {this.getLineElements()}
+                    {this.renderModeSpecificItems()}
                     {this.getPlaceElements()}
                     {this.getTransitionElements()}
                 </svg>
@@ -305,8 +344,10 @@ export default connect(
     (state: IPetriNetViewState) => ({
         model: state.model,
         toolMode: state.toolMode,
-        selectedForConnection: undefined,
-        viewSize: state.viewSize
+        selectedForConnection: state.selectedForConnection,
+        viewSize: state.viewSize,
+        mouseX: state.mouseX,
+        mouseY: state.mouseY
     }), dispatch => ({
         loadModel: (model: IModel) => dispatch(loadModel(model)),
         setSelected: (guid: string) => dispatch(setSelected(guid)),
@@ -318,7 +359,8 @@ export default connect(
         executeTransition: (guid: string) => dispatch(executeTransition(guid)),
         setMode: (mode: ToolMode) => dispatch(setMode(mode)),
         addPlace: (place: IPlaceProps) => dispatch(addPlace(place)),
-        addTransition: (transition: ITransitionProps) => dispatch(addTransition(transition))
+        addTransition: (transition: ITransitionProps) => dispatch(addTransition(transition)),
+        setMousePosition: (x: number, y: number) => dispatch(setMousePosition(x, y))
     })
 )(PetriNetView)
 

@@ -1,6 +1,7 @@
 import {
     TypeKeys,
-    ActionTypes
+    ActionTypes,
+    setSelectedForConnection
 } from '../actions'
 import { IPetriNetViewState, ToolMode } from '../../../interfaces';
 import { enableBatching } from 'redux-batched-actions';
@@ -15,7 +16,9 @@ export function appReducer(
         },
         toolMode: ToolMode.Move,
         selectedForConnection: undefined,
-        viewSize: { width: 1000, height: 1000 }
+        viewSize: { width: 1000, height: 1000 },
+        mouseX: 0,
+        mouseY: 0
     },
     action: ActionTypes): IPetriNetViewState {
 
@@ -103,10 +106,10 @@ export function appReducer(
                 model: {
                     places: state.model.places,
                     transitions: state.model.transitions.map((trans: ITransitionProps) => {
-                        if (trans.guid === action.from && places.find((p) => p.guid === action.to) !== undefined) {
+                        if (trans.guid === action.from && state.model.places.find((p) => p.guid === action.to) !== undefined) {
                             trans.to.push(action.to)
                         }
-                        else if (trans.guid === action.to && places.find((p) => p.guid === action.from) !== undefined) {
+                        else if (trans.guid === action.to && state.model.places.find((p) => p.guid === action.from) !== undefined) {
                             trans.from.push(action.from)
                         }
                         return trans
@@ -203,6 +206,13 @@ export function appReducer(
                     places: state.model.places,
                     transitions: [...state.model.transitions, action.transition]
                 }
+            }
+
+        case TypeKeys.SET_MOUSE_POS:
+            return {
+                ...state,
+                mouseX: action.x,
+                mouseY: action.y
             }
 
         default:
