@@ -9,8 +9,8 @@ export interface ITransitionProps {
     x: number;
     y: number;
     updatePosition: (guid: string, x: number, y: number) => void;
-    from: string[];
-    to: string[];
+    inputs: string[];
+    outputs: string[];
     selected: boolean;
     setSelected: (guid: string) => void;
     setTitle: (guid: string, title: string) => void;

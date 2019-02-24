@@ -53,10 +53,10 @@
             "x": 252,
             "y": 161,
             "selected": false,
-            "from": [
+            "inputs": [
                 "481421c2-9f42-483d-a2e5-3d7fbbf89815"
             ],
-            "to": [
+            "outputs": [
                 "bf48e7c9-6649-4d59-a998-e237b1614e92"
             ],
             "toolMode": 0
@@ -67,10 +67,10 @@
             "x": 248,
             "y": 333,
             "selected": false,
-            "from": [
+            "inputs": [
                 "bf48e7c9-6649-4d59-a998-e237b1614e92"
             ],
-            "to": [
+            "outputs": [
                 "481421c2-9f42-483d-a2e5-3d7fbbf89815",
                 "1f606315-da76-4602-b23a-8532062a574b"
             ],
@@ -82,11 +82,11 @@
             "x": 705,
             "y": 383,
             "selected": false,
-            "from": [
+            "inputs": [
                 "1f606315-da76-4602-b23a-8532062a574b",
                 "33e9307c-9cda-4ad7-a277-e816c7424538"
             ],
-            "to": [
+            "outputs": [
                 "2eb7b76b-a14f-40d5-88ff-82c409d65ff3"
             ],
             "toolMode": 0
@@ -97,10 +97,10 @@
             "x": 711,
             "y": 508,
             "selected": false,
-            "from": [
+            "inputs": [
                 "2eb7b76b-a14f-40d5-88ff-82c409d65ff3"
             ],
-            "to": [
+            "outputs": [
                 "33e9307c-9cda-4ad7-a277-e816c7424538"
             ],
             "toolMode": 0

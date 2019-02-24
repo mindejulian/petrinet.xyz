@@ -107,10 +107,10 @@ export function appReducer(
                     places: state.model.places,
                     transitions: state.model.transitions.map((trans: ITransitionProps) => {
                         if (trans.guid === action.from && state.model.places.find((p) => p.guid === action.to) !== undefined) {
-                            trans.to.push(action.to)
+                            trans.outputs.push(action.to)
                         }
                         else if (trans.guid === action.to && state.model.places.find((p) => p.guid === action.from) !== undefined) {
-                            trans.from.push(action.from)
+                            trans.inputs.push(action.from)
                         }
                         return trans
                     })
@@ -153,21 +153,21 @@ export function appReducer(
                 return state
             }
             var canExecute: boolean = true
-            transToExecute.from.forEach((placeId: string) => {
+            transToExecute.inputs.forEach((placeId: string) => {
                 const place = state.model.places.find((place: IPlaceProps) => place.guid === placeId)
                 if (place !== undefined && place.tokens < 1) {
                     canExecute = false
                 }
             })
             if (transToExecute !== undefined && canExecute) {
-                transToExecute.from.map((placeGuid: string) => {
+                transToExecute.inputs.map((placeGuid: string) => {
                     places2.map((place: IPlaceProps) => {
                         if (place.guid === placeGuid && place.tokens > 0) {
                             place.tokens -= 1
                         }
                     })
                 })
-                transToExecute.to.map((placeGuid: string) => {
+                transToExecute.outputs.map((placeGuid: string) => {
                     places2.map((place: IPlaceProps) => {
                         if (place.guid === placeGuid) {
                             place.tokens += 1

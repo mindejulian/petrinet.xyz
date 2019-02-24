@@ -111,8 +111,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     updatePosition: this.updatePosition,
                     selected: false,
                     setSelected: this.setSelected,
-                    from: [],
-                    to: [],
+                    inputs: [],
+                    outputs: [],
                     setTitle: this.setTitle,
                     executeTransition: this.executeTransition,
                     toolMode: this.props.toolMode
@@ -203,8 +203,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                     x={transProps.x}
                     y={transProps.y}
                     updatePosition={this.updatePosition}
-                    from={transProps.from}
-                    to={transProps.to}
+                    inputs={transProps.inputs}
+                    outputs={transProps.outputs}
                     selected={transProps.selected}
                     setSelected={this.setSelected}
                     setTitle={this.setTitle}
@@ -217,8 +217,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
 
     getLineElements = () => {
         return this.props.model.transitions.flatMap((transProps) => {
-            const fromLines = transProps.from.map((placeId) => this.createLines(transProps, placeId, true));
-            const toLines = transProps.to.map((placeId) => this.createLines(transProps, placeId, false));
+            const fromLines = transProps.inputs.map((placeId) => this.createLines(transProps, placeId, true));
+            const toLines = transProps.outputs.map((placeId) => this.createLines(transProps, placeId, false));
             return fromLines.concat(toLines);
         })
     }
@@ -294,13 +294,14 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
         switch (this.props.toolMode) {
             case ToolMode.AddConnection:
                 if (this.props.selectedForConnection) {
+                    let toTransition = (this.selectedForConnectionPosition() as IPlaceProps).tokens !== undefined
                     return (
                         <Line
                             x1={this.selectedForConnectionPosition().x}
-                            y1={this.selectedForConnectionPosition().y}
+                            y1={this.selectedForConnectionPosition().y + (toTransition ? 0 : 25)}
                             x2={this.props.mouseX}
                             y2={this.props.mouseY}
-                            toTransition={true}
+                            toTransition={toTransition}
                         />)
                 } else {
                     return null

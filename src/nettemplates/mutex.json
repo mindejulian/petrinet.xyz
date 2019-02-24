@@ -71,11 +71,11 @@
             "x": 242,
             "y": 224,
             "selected": false,
-            "from": [
+            "inputs": [
                 "1e1c147b-aa1b-4378-a6a6-18c697c769cc",
                 "e0a1e25e-7942-460e-b8ea-1ed8a4e8eb5c"
             ],
-            "to": [
+            "outputs": [
                 "b76b3874-9edf-4e43-b20b-3452bd55575b"
             ],
             "toolMode": 0
@@ -86,10 +86,10 @@
             "x": 248,
             "y": 440,
             "selected": false,
-            "from": [
+            "inputs": [
                 "b76b3874-9edf-4e43-b20b-3452bd55575b"
             ],
-            "to": [
+            "outputs": [
                 "f02a5e91-459a-40be-a189-a96ec3e4d3c9",
                 "e0a1e25e-7942-460e-b8ea-1ed8a4e8eb5c"
             ],
@@ -101,11 +101,11 @@
             "x": 630,
             "y": 213,
             "selected": false,
-            "from": [
+            "inputs": [
                 "e0a1e25e-7942-460e-b8ea-1ed8a4e8eb5c",
                 "f2238bd1-e366-4c6f-9f34-19032a746dfc"
             ],
-            "to": [
+            "outputs": [
                 "0d1a6b31-79d0-4111-94c5-abe8991ac9fd"
             ],
             "toolMode": 0
@@ -116,10 +116,10 @@
             "x": 632,
             "y": 442,
             "selected": false,
-            "from": [
+            "inputs": [
                 "0d1a6b31-79d0-4111-94c5-abe8991ac9fd"
             ],
-            "to": [
+            "outputs": [
                 "e0a1e25e-7942-460e-b8ea-1ed8a4e8eb5c",
                 "c7565a91-9e85-4222-8160-0447fe86b7bf"
             ],
@@ -131,8 +131,8 @@
             "x": 29,
             "y": 77,
             "selected": false,
-            "from": [],
-            "to": [
+            "inputs": [],
+            "outputs": [
                 "1e1c147b-aa1b-4378-a6a6-18c697c769cc"
             ],
             "toolMode": 0
@@ -143,8 +143,8 @@
             "x": 865,
             "y": 60,
             "selected": false,
-            "from": [],
-            "to": [
+            "inputs": [],
+            "outputs": [
                 "f2238bd1-e366-4c6f-9f34-19032a746dfc"
             ],
             "toolMode": 0
