@@ -1,0 +1,97 @@
+{
+    "title": "Machine shop",
+    "places": [
+        {
+            "guid": "f5e62000-15bc-41f1-aa96-b8c840345691",
+            "title": "An order is waiting",
+            "x": 235,
+            "y": 67,
+            "tokens": 0,
+            "selected": false,
+            "toolMode": 2
+        },
+        {
+            "guid": "51009bdd-7107-4c48-86ea-38434da85489",
+            "title": "Order is being processed",
+            "x": 588,
+            "y": 70,
+            "tokens": 0,
+            "selected": false,
+            "toolMode": 2
+        },
+        {
+            "guid": "70eb2313-7351-41b2-95fd-18cbc25c2c97",
+            "title": "The order is complete",
+            "x": 956,
+            "y": 70,
+            "tokens": 0,
+            "selected": false,
+            "toolMode": 2
+        },
+        {
+            "guid": "2aef342c-2686-43d0-9981-aa18fb0df973",
+            "title": "The machine is idle, waiting for work",
+            "x": 581,
+            "y": 246,
+            "tokens": 1,
+            "selected": false,
+            "toolMode": 2
+        }
+    ],
+    "transitions": [
+        {
+            "guid": "7fcd5286-6d45-4784-90f9-f51664f00973",
+            "title": "An order arrives",
+            "x": 96,
+            "y": 40,
+            "selected": false,
+            "inputs": [],
+            "outputs": [
+                "f5e62000-15bc-41f1-aa96-b8c840345691"
+            ],
+            "toolMode": 1
+        },
+        {
+            "guid": "3264ab43-a286-4558-b1ea-6ded3adc6bbd",
+            "title": "Processing starts",
+            "x": 404,
+            "y": 45,
+            "selected": false,
+            "inputs": [
+                "f5e62000-15bc-41f1-aa96-b8c840345691",
+                "2aef342c-2686-43d0-9981-aa18fb0df973"
+            ],
+            "outputs": [
+                "51009bdd-7107-4c48-86ea-38434da85489"
+            ],
+            "toolMode": 1
+        },
+        {
+            "guid": "344d9f61-2009-4bb7-9555-10c118da0081",
+            "title": "Processing is complete",
+            "x": 768,
+            "y": 47,
+            "selected": false,
+            "inputs": [
+                "51009bdd-7107-4c48-86ea-38434da85489"
+            ],
+            "outputs": [
+                "70eb2313-7351-41b2-95fd-18cbc25c2c97",
+                "2aef342c-2686-43d0-9981-aa18fb0df973"
+            ],
+            "toolMode": 1
+        },
+        {
+            "guid": "2a8f8e03-6650-4c56-966d-c8ad97c9b971",
+            "title": "The order is sent for delivery",
+            "x": 1148,
+            "y": 46,
+            "selected": false,
+            "inputs": [
+                "70eb2313-7351-41b2-95fd-18cbc25c2c97"
+            ],
+            "outputs": [],
+            "toolMode": 1
+        }
+    ]
+}

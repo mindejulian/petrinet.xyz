@@ -11,6 +11,7 @@ import { ITransitionProps } from '../../Transition'
 export function appReducer(
     state: IPetriNetViewState = {
         model: {
+            title: 'noname',
             places: [],
             transitions: []
         },
@@ -33,6 +34,7 @@ export function appReducer(
             return {
                 ...state,
                 model: {
+                    ...state.model,
                     places: state.model.places.map((place) => {
                         if (place.guid === action.guid) {
                             place.selected = true
@@ -81,6 +83,7 @@ export function appReducer(
             return {
                 ...state,
                 model: {
+                    ...state.model,
                     places: places,
                     transitions: transitions
                 },
@@ -91,6 +94,7 @@ export function appReducer(
             return {
                 ...state,
                 model: {
+                    ...state.model,
                     places: state.model.places.filter((place: IPlaceProps) => {
                         return !place.selected
                     }),
@@ -104,7 +108,7 @@ export function appReducer(
             return {
                 ...state,
                 model: {
-                    places: state.model.places,
+                    ...state.model,
                     transitions: state.model.transitions.map((trans: ITransitionProps) => {
                         if (trans.guid === action.from && state.model.places.find((p) => p.guid === action.to) !== undefined) {
                             trans.outputs.push(action.to)
@@ -123,6 +127,7 @@ export function appReducer(
             return {
                 ...state,
                 model: {
+                    ...state.model,
                     places: state.model.places.map((place: IPlaceProps) => {
                         if (place.guid === action.guid) {
                             place.title = action.title;
@@ -177,6 +182,7 @@ export function appReducer(
                 return {
                     ...state,
                     model: {
+                        ...state.model,
                         places: places2,
                         transitions: state.model.transitions
                     }
@@ -194,6 +200,7 @@ export function appReducer(
             return {
                 ...state,
                 model: {
+                    ...state.model,
                     places: [...state.model.places, action.place],
                     transitions: state.model.transitions
                 }
@@ -203,6 +210,7 @@ export function appReducer(
             return {
                 ...state,
                 model: {
+                    ...state.model,
                     places: state.model.places,
                     transitions: [...state.model.transitions, action.transition]
                 }

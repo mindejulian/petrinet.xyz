@@ -15,6 +15,7 @@ export interface ViewSize {
 }
 
 export interface IModel {
+    title: string;
     places: IPlaceProps[];
     transitions: ITransitionProps[];
 }

@@ -106,8 +106,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 let transition: ITransitionProps = {
                     guid: guid,
                     title: "New transition",
-                    x: e.pageX - 6,
-                    y: e.pageY - 20,
+                    x: e.clientX - 6,
+                    y: e.clientY - 20 - 95,
                     updatePosition: this.updatePosition,
                     selected: false,
                     setSelected: this.setSelected,
@@ -127,8 +127,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                 let place: IPlaceProps = {
                     guid: guid,
                     title: "New place",
-                    x: e.pageX,
-                    y: e.pageY,
+                    x: e.clientX,
+                    y: e.clientY - 95,
                     tokens: 0,
                     updatePosition: this.updatePosition,
                     selected: false,
