@@ -59,7 +59,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     setSelected = (guid: string) => {
         this.props.setSelected(guid)
 
-        if (this.props.toolMode === ToolMode.AddConnection) {
+        if (this.props.toolMode === ToolMode.AddConnection && guid !== 'none') {
             if (this.props.selectedForConnection) {
                 this.props.addConnection(this.props.selectedForConnection, guid)
             } else {
@@ -160,7 +160,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
     }
 
     handleMouseMove = (e: any) => {
-        this.props.setMousePosition(e.pageX, e.pageY)
+        this.props.setMousePosition(e.pageX, e.pageY - 95)
     }
 
     componentDidMount = () => {
