@@ -47,7 +47,10 @@
             "selected": false,
             "inputs": [],
             "outputs": [
-                "f5e62000-15bc-41f1-aa96-b8c840345691"
+                {
+                    "guid": "f5e62000-15bc-41f1-aa96-b8c840345691",
+                    "count": 1
+                }
             ],
             "toolMode": 1
         },
@@ -58,11 +61,20 @@
             "y": 45,
             "selected": false,
             "inputs": [
-                "f5e62000-15bc-41f1-aa96-b8c840345691",
-                "2aef342c-2686-43d0-9981-aa18fb0df973"
+                {
+                    "guid": "f5e62000-15bc-41f1-aa96-b8c840345691",
+                    "count": 1
+                },
+                {
+                    "guid": "2aef342c-2686-43d0-9981-aa18fb0df973",
+                    "count": 1
+                }
             ],
             "outputs": [
-                "51009bdd-7107-4c48-86ea-38434da85489"
+                {
+                    "guid": "51009bdd-7107-4c48-86ea-38434da85489",
+                    "count": 1
+                }
             ],
             "toolMode": 1
         },
@@ -73,11 +85,20 @@
             "y": 47,
             "selected": false,
             "inputs": [
-                "51009bdd-7107-4c48-86ea-38434da85489"
+                {
+                    "guid": "51009bdd-7107-4c48-86ea-38434da85489",
+                    "count": 1
+                }
             ],
             "outputs": [
-                "70eb2313-7351-41b2-95fd-18cbc25c2c97",
-                "2aef342c-2686-43d0-9981-aa18fb0df973"
+                {
+                    "guid": "70eb2313-7351-41b2-95fd-18cbc25c2c97",
+                    "count": 1
+                },
+                {
+                    "guid": "2aef342c-2686-43d0-9981-aa18fb0df973",
+                    "count": 1
+                }
             ],
             "toolMode": 1
         },
@@ -88,7 +109,10 @@
             "y": 46,
             "selected": false,
             "inputs": [
-                "70eb2313-7351-41b2-95fd-18cbc25c2c97"
+                {
+                    "guid": "70eb2313-7351-41b2-95fd-18cbc25c2c97",
+                    "count": 1
+                }
             ],
             "outputs": [],
             "toolMode": 1

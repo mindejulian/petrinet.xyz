@@ -6,7 +6,7 @@ import {
 import { IPetriNetViewState, ToolMode } from '../../../interfaces';
 import { enableBatching } from 'redux-batched-actions';
 import { IPlaceProps } from '../../Place'
-import { ITransitionProps } from '../../Transition'
+import { ITransitionProps, InOutFunc } from '../../Transition'
 
 export function appReducer(
     state: IPetriNetViewState = {
@@ -111,10 +111,30 @@ export function appReducer(
                     ...state.model,
                     transitions: state.model.transitions.map((trans: ITransitionProps) => {
                         if (trans.guid === action.from && state.model.places.find((p) => p.guid === action.to) !== undefined) {
-                            trans.outputs.push(action.to)
+                            let ioFunc = trans.outputs.find(f => f.guid === action.to);
+                            if (ioFunc) {
+                                trans.outputs = trans.outputs.map(ioFunc => {
+                                    if (ioFunc.guid === action.to) {
+                                        ioFunc.count++;
+                                    }
+                                    return ioFunc;
+                                })
+                            } else {
+                                trans.outputs.push({ guid: action.to, count: 1 })
+                            }
                         }
                         else if (trans.guid === action.to && state.model.places.find((p) => p.guid === action.from) !== undefined) {
-                            trans.inputs.push(action.from)
+                            let ioFunc = trans.inputs.find(f => f.guid === action.from);
+                            if (ioFunc) {
+                                trans.inputs = trans.inputs.map(ioFunc => {
+                                    if (ioFunc.guid === action.from) {
+                                        ioFunc.count++;
+                                    }
+                                    return ioFunc;
+                                })
+                            } else {
+                                trans.inputs.push({ guid: action.from, count: 1 })
+                            }
                         }
                         return trans
                     })
@@ -158,24 +178,24 @@ export function appReducer(
                 return state
             }
             var canExecute: boolean = true
-            transToExecute.inputs.forEach((placeId: string) => {
-                const place = state.model.places.find((place: IPlaceProps) => place.guid === placeId)
-                if (place !== undefined && place.tokens < 1) {
+            transToExecute.inputs.forEach((ioFunc: InOutFunc) => {
+                const place = state.model.places.find((place: IPlaceProps) => place.guid === ioFunc.guid)
+                if (place !== undefined && place.tokens < ioFunc.count) {
                     canExecute = false
                 }
             })
             if (transToExecute !== undefined && canExecute) {
-                transToExecute.inputs.map((placeGuid: string) => {
+                transToExecute.inputs.map((ioFunc: InOutFunc) => {
                     places2.map((place: IPlaceProps) => {
-                        if (place.guid === placeGuid && place.tokens > 0) {
-                            place.tokens -= 1
+                        if (place.guid === ioFunc.guid && place.tokens > 0) {
+                            place.tokens -= ioFunc.count
                         }
                     })
                 })
-                transToExecute.outputs.map((placeGuid: string) => {
+                transToExecute.outputs.map((ioFunc: InOutFunc) => {
                     places2.map((place: IPlaceProps) => {
-                        if (place.guid === placeGuid) {
-                            place.tokens += 1
+                        if (place.guid === ioFunc.guid) {
+                            place.tokens += ioFunc.count
                         }
                     })
                 })

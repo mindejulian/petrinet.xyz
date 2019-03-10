@@ -28,7 +28,8 @@ class ModelPicker extends React.Component<IModelPickerProps, IModelPickerState> 
                 DemoNet as IModel,
                 PubSub as IModel,
                 Mutex as IModel,
-                Machine as IModel]
+                Machine as IModel
+            ]
         }
     }
 

@@ -3,14 +3,19 @@ import './index.css';
 import { throws } from 'assert';
 import { ToolMode } from '../../interfaces';
 
+export interface InOutFunc {
+    guid: string;
+    count: number;
+}
+
 export interface ITransitionProps {
     guid: string;
     title: string;
     x: number;
     y: number;
     updatePosition: (guid: string, x: number, y: number) => void;
-    inputs: string[];
-    outputs: string[];
+    inputs: InOutFunc[];
+    outputs: InOutFunc[];
     selected: boolean;
     setSelected: (guid: string) => void;
     setTitle: (guid: string, title: string) => void;

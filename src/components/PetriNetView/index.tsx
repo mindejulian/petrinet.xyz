@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './index.css';
 import { Toolbar, IToolbarProps } from '../Toolbar';
 import { Place, IPlaceProps } from '../Place';
-import { Transition, ITransitionProps } from '../Transition';
+import { Transition, ITransitionProps, InOutFunc } from '../Transition';
 import Line from '../Line';
 import DemoNet from '../../nettemplates/demo.json';
 import uuid from 'uuid';
@@ -217,8 +217,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
 
     getLineElements = () => {
         return this.props.model.transitions.flatMap((transProps) => {
-            const fromLines = transProps.inputs.map((placeId) => this.createLines(transProps, placeId, true));
-            const toLines = transProps.outputs.map((placeId) => this.createLines(transProps, placeId, false));
+            const fromLines = transProps.inputs.map((ioFunc) => this.createLines(transProps, ioFunc, true));
+            const toLines = transProps.outputs.map((ioFunc) => this.createLines(transProps, ioFunc, false));
             return fromLines.concat(toLines);
         })
     }
@@ -251,8 +251,8 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
             </defs>)
     }
 
-    createLines = (transProps: ITransitionProps, placeId: string, toTransition: boolean) => {
-        const place = this.props.model.places.find((p) => p.guid === placeId)
+    createLines = (transProps: ITransitionProps, ioFunc: InOutFunc, toTransition: boolean) => {
+        const place = this.props.model.places.find((p) => p.guid === ioFunc.guid)
         if (place !== undefined) {
             if (toTransition) {
                 return (
@@ -261,16 +261,19 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                         y1={place.y}
                         x2={transProps.x}
                         y2={transProps.y + 25}
-                        key={transProps.guid + '-' + place.guid}
+                        count={ioFunc.count}
+                        key={(toTransition ? (place.guid + '>->' + transProps.guid) : (transProps.guid + '>->' + place.guid))}
                         toTransition={toTransition} />
                 )
+
             }
             return (
-                <Line
+                < Line
                     x1={transProps.x}
                     y1={transProps.y + 25}
                     x2={place.x}
                     y2={place.y}
+                    count={ioFunc.count}
                     key={transProps.guid + '-' + place.guid}
                     toTransition={toTransition} />
             )
@@ -301,6 +304,7 @@ class PetriNetView extends React.Component<IPetriNetViewProps, IPetriNetViewStat
                             y1={this.selectedForConnectionPosition().y + (toTransition ? 0 : 25)}
                             x2={this.props.mouseX}
                             y2={this.props.mouseY}
+                            count={1}
                             toTransition={toTransition}
                         />)
                 } else {
